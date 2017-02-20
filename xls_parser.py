@@ -7,25 +7,22 @@ class Xls_Parser(object):
 		self.sheet = self.book.sheet_by_index(0)
 		print self.sheet
 		# read header values into the list
+		self.headers = ['', 'code', 'internationalCode', 'zone_code', 'location', 'start_date', 'latitude', 'longitude', 'altitude', 'type', 'zone_type', 'emission_source', 'address']
 
 
-	def parse_header(self):
-		return [self.sheet.cell(0, col_index).value.lower() for col_index in xrange(self.sheet.ncols)]
-
-	def parse_content(self, headers):
+	def parse_content(self):
 		objects = []
 		cols_number = self.sheet.ncols
 		for i in range(1, self.sheet.nrows):
 			object = {}
 			row = [self.sheet.cell(i, col_index).value for col_index in xrange(cols_number)]
 			for i in range(1, cols_number):
-				object[headers[i]] = row[i]
+				object[self.headers[i]] = row[i]
 			objects.append(object)
 		return objects
 
 	def parse(self):
-		headers = self.parse_header()
-		objects = self.parse_content(headers)
+		objects = self.parse_content()
 		return objects
 
 

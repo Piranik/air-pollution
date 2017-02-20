@@ -9,8 +9,11 @@ import copy
 import os
 
 ORGANIZATION_NAME = 'agentia-nationala-pentru-protectia-mediului'
-DOWNLOAD_FOLDER = 'datasets/'
-OTHER_DOWNLOAD_FOLDER = 'other_files/'
+DOWNLOAD_FOLDER = '../datasets/'
+OTHER_DOWNLOAD_FOLDER = '../other_files/'
+
+DOWNLOAD_FOLDER_ALL = '../datasets_all/'
+
 
 class CrawlCKAN(object):
     def __init__(self,config):
@@ -27,7 +30,29 @@ class CrawlCKAN(object):
         self.prepare_environment()
 
 
-    def do_process(self):
+    def do_process_all(self):
+        print "BEGIN PROCESSING DATASETS METADATA " + str(self.current_time)
+        offset = 0
+        limit_size = received = 100
+        file_index = 0
+        while limit_size == received:
+            datasets = self.ckan_inst.action.current_package_list_with_resources(
+                limit=limit_size, offset=offset)
+            received = len(datasets)
+            offset += received
+
+            datasets = self.filter_datasets(datasets)
+            for dataset in datasets:
+                for resource in dataset['resources']:
+                    response = self.download_resource_data(resource['url'])
+                    filename = (DOWNLOAD_FOLDER_ALL + 'resource' +
+                                str(file_index) + '.' + resource['format'].lower())
+                    if os.path.isfile(filename):
+                        continue
+                    self.write_file(filename, response.content)
+                    file_index += 1
+
+    def do_process_selective(self):
         print "BEGIN PROCESSING DATASETS METADATA " + str(self.current_time)
         offset = 0
         limit_size = received = 100
@@ -172,9 +197,9 @@ class CrawlCKAN(object):
 
 
     def prepare_environment(self):
-        if not os.path.isdir("datasets"):
-            os.makedirs('datasets')
+        if not os.path.isdir(DOWNLOAD_FOLDER):
+            os.makedirs(DOWNLOAD_FOLDER)
 
-        if not os.path.isdir("other_files"):
-            os.makedirs('other_files')
+        if not os.path.isdir(OTHER_DOWNLOAD_FOLDER):
+            os.makedirs(OTHER_DOWNLOAD_FOLDER)
 

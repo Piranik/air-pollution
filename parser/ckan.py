@@ -7,4 +7,4 @@ config=configInst.get_config()
 
 #do work
 cc=CrawlCKAN(config)
-cc.do_process()
+cc.do_process_all()
