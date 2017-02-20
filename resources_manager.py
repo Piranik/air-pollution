@@ -55,7 +55,7 @@ class Resources_Manager(object):
     # Get Methods
     def get_stations(self):
         stations = self.database_controller.find_in_collection('air_stations', {})
-        return stations
+        return list(stations)
 
     # Measurement methods
     # Add/Update Methods

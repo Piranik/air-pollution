@@ -6,7 +6,7 @@ from resources_manager import Resources_Manager
 def create_data_summary():
     MONTHS = ['01', '02', '03', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
 
-    YEARS = [2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016]
+    YEARS = [2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016]
     db_controller = Database_Controller()
     res_manager = Resources_Manager(db_controller)
 
@@ -43,9 +43,10 @@ def create_data_summary():
 
     print 'Writing Summary for stations'
     row += 1
+    print len(stations)
     for station in stations:
-        print 'Station %s' % station['internationalCode']
-        if (empty_stations and station not in empty_stations) or not empty_stations:
+        if station['internationalCode'] not in empty_stations:
+            print 'Station %s' % station['internationalCode']
             col = 0
             worksheet.write(row, col, station['internationalCode'])
             for year in YEARS:
@@ -54,16 +55,18 @@ def create_data_summary():
                 for month in MONTHS:
                     col = 2
                     worksheet.write(row, col, month)
+                    col += 1
                     for parameter_index in station['parameters']:
-                        col = 3
                         parameter = res_manager.get_parameter(parameter_index)
                         measurements = res_manager.get_measurements_for_station(station['internationalCode'], year, month, parameter_index)
                         worksheet.write(row, col, parameter['name'])
                         if measurements:
-                            worksheet.write(row, col+1, len(measurements[0]['measurements']))
+                            worksheet.write(row+1, col, len(measurements[0]['measurements']))
                         else:
-                            worksheet.write(row, col+1, 'Not exists')
-                        row += 1
+                            worksheet.write(row+1, col, 'Not exists')
+                        col += 1
+                row += 2
+
         print 'Station %s done' % station['internationalCode']
 
     workbook.close()
