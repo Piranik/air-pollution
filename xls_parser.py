@@ -1,35 +1,22 @@
 from xlrd import open_workbook
 
-
 class Xls_Parser(object):
-	def __init__(self, file_name):
-		self.book = open_workbook(file_name)
-		self.sheet = self.book.sheet_by_index(0)
-		print self.sheet
-		# read header values into the list
-		self.headers = ['', 'code', 'internationalCode', 'zone_code', 'location', 'start_date', 'latitude', 'longitude', 'altitude', 'type', 'zone_type', 'emission_source', 'address']
+    def __init__(self, filepath, formatting_info=False):
+        super(Xls_Parser, self).__init__()
 
+        print filepath, formatting_info
+        self.book = open_workbook(filepath, formatting_info=formatting_info)
+        self.sheet = self.book.sheet_by_index(0)
 
-	def parse_content(self):
-		objects = []
-		cols_number = self.sheet.ncols
-		for i in range(1, self.sheet.nrows):
-			object = {}
-			row = [self.sheet.cell(i, col_index).value for col_index in xrange(cols_number)]
-			for i in range(1, cols_number):
-				object[self.headers[i]] = row[i]
-			objects.append(object)
-		return objects
+    def get_sheet_dimension(self):
+        return self.sheet.nrows, self.sheet.ncols
 
-	def parse(self):
-		objects = self.parse_content()
-		return objects
+    def get_cell(self, x, y):
+        return self.sheet.cell(x, y)
 
+    def get_value(self, x, y):
+        return self.sheet.cell(x, y).value
 
-if __name__ == '__main__':
-	xls_parser = Xls_Parser('data_files/informatii-privind-statiile-rnmca.xls')
-	objects = xls_parser.parse()
-	for object in objects:
-		print object
-
-	print len(objects)
+    def get_format_of_cell(self, x, y):
+        xf_index = self.sheet.cell_xf_index(x, y)
+        return self.book.xf_list[xf_index]
