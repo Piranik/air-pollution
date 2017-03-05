@@ -4,7 +4,6 @@ class Xls_Parser(object):
     def __init__(self, filepath, formatting_info=False):
         super(Xls_Parser, self).__init__()
 
-        print filepath, formatting_info
         self.book = open_workbook(filepath, formatting_info=formatting_info)
         self.sheet = self.book.sheet_by_index(0)
 

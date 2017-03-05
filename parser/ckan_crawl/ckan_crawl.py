@@ -203,3 +203,6 @@ class CrawlCKAN(object):
         if not os.path.isdir(OTHER_DOWNLOAD_FOLDER):
             os.makedirs(OTHER_DOWNLOAD_FOLDER)
 
+        if not os.path.isdir(DOWNLOAD_FOLDER_ALL):
+            os.makedirs(DOWNLOAD_FOLDER_ALL)
+

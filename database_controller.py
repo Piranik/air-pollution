@@ -19,6 +19,16 @@ DEFAULT_STATION_COLLECTION_INDEXES = [
     ('internationalCode', ASCENDING)
 ]
 
+DEFAULT_DISEASES_COLLECTION_INDEXES = [
+    ('code', ASCENDING),
+    ('name', ASCENDING),
+    ('type', ASCENDING)
+]
+
+DEFAULT_COUNTIES_COLLECTION_INDEXES = [
+    ('name', ASCENDING)
+]
+
 class Database_Controller(object):
     __metaclass__ = Singleton
 
@@ -36,6 +46,12 @@ class Database_Controller(object):
         if 'parameters' not in current_collections:
             parameters_collection = self.database.create_collection('parameters')
             parameters_collection.create_index(DEFAULT_PARAMETER_INDEXES, unique=True)
+        if 'diseases' not in current_collections:
+            diseases_collection = self.database.create_collection('diseases')
+            diseases_collection.create_index(DEFAULT_DISEASES_COLLECTION_INDEXES, unique=True)
+        if 'counties' not in current_collections:
+            counties_collection = self.database.create_collection('counties')
+            counties_collection.create_index(DEFAULT_COUNTIES_COLLECTION_INDEXES, unique=True)
 
     def check_connection(self):
         return self.db_connection['connect']

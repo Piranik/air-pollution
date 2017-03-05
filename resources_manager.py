@@ -1,7 +1,7 @@
 from database_controller import DEFAULT_STATION_COLLECTION_INDEXES, DEFAULT_PARAMETER_INDEXES, DEFAULT_STATION_INDEXES
 
 
-files = ['data_files/informatii-privind-statiile-rnmca.xls']
+files = ['informatii-privind-statiile-rnmca.xls']
 
 station_key = 'statia'
 
@@ -12,6 +12,23 @@ class Resources_Manager(object):
         self.database_controller = database_controller
         self.stations_collection = database_controller.get_collection('air_stations')
         self.parameters_collection = database_controller.get_collection('parameters')
+        self.diseases_collection = database_controller.get_collection('diseases')
+        self.counties_collection = database_controller.get_collection('counties')
+
+    # County Methos
+    def add_county(self, new_county_name):
+        county_query = self.county_query_object(new_county_name)
+        county_update = self.county_update_object(new_county_name)
+        self.counties_collection.update(county_query, county_update, True)
+
+    def get_counties(self):
+        return list(self.database_controller.find_in_collection(self.counties_collection.name, {}))
+
+    # Disease Methods
+    def update_insert_disease(self, new_disease, county, start_date, end_date):
+        disease_query = self.disease_query_object(new_disease)
+        disease_update = self.disease_update_object(new_disease, county, start_date, end_date)
+        self.diseases_collection.update(disease_query, disease_update, True)
 
     # Station methods
     def update_insert_station(self, new_station):
@@ -130,3 +147,45 @@ class Resources_Manager(object):
             'year': date[0:date_index_of_line],
             'month': date[date_index_of_line+1:],
             'measurements': measurements}}
+
+    # Disease query objects
+    def disease_query_object(self, new_disease):
+        return {
+            'code': new_disease['code'],
+            'type': new_disease['type']
+            }
+
+    def disease_update_object(self, new_disease, county, start_date, end_date):
+        new_disease = self.convert_disease_object(new_disease, county, start_date, end_date)
+        new_statistics = list(new_disease.pop('statistics'))
+        return {'$set' : new_disease,
+                '$push': {'statistics': {'$each': new_statistics}}}
+
+    def convert_disease_object(self, new_disease, county, start_date, end_date):
+        statistic_object = {'start_date': start_date,
+                            'end_date': end_date,
+                            'county': county,
+                            'vr': new_disease['vr'],
+                            'total_number_cases': new_disease['total_number_cases'],
+                            'percentage_of_cases': new_disease['percentage_of_cases'],
+                            'acute_casses': new_disease['acute_casses'],
+                            'chronic_cases': new_disease['chronic_cases'],
+                            'spitalization_total': new_disease['spitalization_total'],
+                            'spitalization_acute': new_disease['spitalization_acute'],
+                            'spitalization_chronic': new_disease['spitalization_chronic'],
+                            'dms_acute': new_disease['dms_acute'],
+                            'dms_chronic': new_disease['dms_chronic']
+                           }
+        converted_disease_object = {'name': new_disease['name'],
+                                    'type': new_disease['type'],
+                                    'code': new_disease['code'],
+                                    'statistics': [statistic_object]}
+        return converted_disease_object
+
+
+    def county_query_object(self, county_name):
+        return {'name': county_name}
+
+    def county_update_object(self, county_name):
+        return {'$set' : {'name' : county_name}}
+
