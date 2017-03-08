@@ -1,6 +1,5 @@
-from pymongo import MongoClient, ASCENDING, DESCENDING
-from pymongo.collection import Collection
-from singleton import Singleton
+import sys
+from pymongo import MongoClient, ASCENDING
 
 DEFAULT_STATION_INDEXES = [
     ('year', ASCENDING),
@@ -29,8 +28,8 @@ DEFAULT_COUNTIES_COLLECTION_INDEXES = [
     ('name', ASCENDING)
 ]
 
+
 class Database_Controller(object):
-    __metaclass__ = Singleton
 
     def __init__(self, url = 'mongodb://localhost/', port=27017, database='Air-Pollution'):
         self.db_connection = MongoClient(url + str(port))
@@ -62,13 +61,22 @@ class Database_Controller(object):
     def collection_exists(self, collection_name):
         return collection_name in self.collections
 
-    def create_collection(self, name, indexes=None):
+    def create_collection(self, name, mode=None):
         new_collection = self.database.create_collection(name)
 
         if new_collection:
             self.collections.add(name)
-            if indexes:
-                new_collection.create_index(indexes, unique=True)
+            if mode == 'station':
+                new_collection.create_index(DEFAULT_STATION_COLLECTION_INDEXES, unique=True)
+            elif mode == 'parameter':
+                new_collection.create_index(DEFAULT_PARAMETER_INDEXES, unique=True)
+            elif mode == 'county':
+                new_collection.create_index(DEFAULT_COUNTIES_COLLECTION_INDEXES, unique=True)
+            elif mode == 'station_measurement':
+                new_collection.create_index(DEFAULT_STATION_INDEXES, unique=True)
+            elif mode == 'disease':
+                new_collection.create_index(DEFAULT_DISEASES_COLLECTION_INDEXES, unique=True)
+
         return new_collection
 
     def insert_object_in_collection(self, collection_name, new_object):

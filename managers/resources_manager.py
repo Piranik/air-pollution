@@ -1,19 +1,17 @@
-from database_controller import DEFAULT_STATION_COLLECTION_INDEXES, DEFAULT_PARAMETER_INDEXES, DEFAULT_STATION_INDEXES
+from managers.controllers.database_controller import Database_Controller
 
-
-files = ['informatii-privind-statiile-rnmca.xls']
-
-station_key = 'statia'
 
 class Resources_Manager(object):
     """Resources Manager for Stations"""
-    def __init__(self, database_controller):
+    def __init__(self, app_config):
         super(Resources_Manager, self).__init__()
-        self.database_controller = database_controller
+        self.app_config = app_config
+        database_controller = Database_Controller()
         self.stations_collection = database_controller.get_collection('air_stations')
         self.parameters_collection = database_controller.get_collection('parameters')
         self.diseases_collection = database_controller.get_collection('diseases')
         self.counties_collection = database_controller.get_collection('counties')
+        self.database_controller = database_controller
 
     # County Methos
     def add_county(self, new_county_name):
@@ -47,7 +45,7 @@ class Resources_Manager(object):
         if not self.database_controller.collection_exists(
                 new_station['internationalCode']):
             self.database_controller.create_collection(
-                new_station['internationalCode'], DEFAULT_STATION_INDEXES)
+                new_station['internationalCode'], 'station_measurement')
 
     def update_station(self, new_station):
         station_collection = self.database_controller.get_collection(
@@ -69,6 +67,9 @@ class Resources_Manager(object):
 
         return station is not None and self.database_controller.collection_exists(station_name)
 
+    def get_stations_by_county(self, county_name):
+        return list(self.database_controller.find_in_collection(self.stations_collection.name,
+                                                                {'county': county_name}))
 
     # Parameter methods
     def update_insert_parameter(self, new_parameter):
@@ -117,7 +118,6 @@ class Resources_Manager(object):
             measurements = self.database_controller.find_in_collection(station_name, query_object)
             return list(measurements)
         return None
-
 
     def create_query_object_for_find(self, year=None, month=None, parameter_index=None):
         query_object = {}
