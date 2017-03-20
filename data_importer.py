@@ -14,7 +14,6 @@ def write_error_in_log(file_name):
     with open('error_measurements.log', 'a') as error_measurements_log:
         error_measurements_log.write(file_name + '\n')
 
-
 def import_stations(resources_manager, app_config):
     print 'Importing Stations'
 
@@ -29,11 +28,12 @@ def import_stations(resources_manager, app_config):
             resources_manager.add_county(county)
             for station_code in county_stations_organization[county]:
                 stations[station_code]['county'] = county
-    print stations
+
     for station_code in stations:
         print station_code
         resources_manager.update_insert_station(stations[station_code])
     print 'Importing Stations Done'
+
 
 def import_stations_measurements(resources_manager, app_config):
     print 'Importing Measurements'
@@ -43,7 +43,7 @@ def import_stations_measurements(resources_manager, app_config):
     datasets_files = [join(app_config['stations_measurements_folder'], f) for f in listdir(
         app_config['stations_measurements_folder']) if isfile(join(
             app_config['stations_measurements_folder'], f)) and '.xml' in f]
-
+    print datasets_files
     for dataset_file in datasets_files:
         try:
             print 'Parsing: %s' % dataset_file
@@ -55,6 +55,9 @@ def import_stations_measurements(resources_manager, app_config):
                 print 'Adding resources'
                 if resources_manager.station_exists(
                         station_info['internationalCode']):
+                    # resources_manager.update_insert_station()
+                    resources_manager.update_station_parameters(
+                        station_info['internationalCode'], station_info['parameters'])
                     resources_manager.add_measurements_for_station(
                         dataset_file, station_info, date, measurements)
             print 'File %s Succesful' % dataset_file
@@ -83,8 +86,8 @@ def import_data(app_config):
     # ensure db connection
     resources_manager = Resources_Manager(app_config)
 
-    # import_stations(resources_manager, app_config)
-    # import_stations_measurements(resources_manager, app_config)
-    import_diseases(resources_manager, app_config)
+    import_stations(resources_manager, app_config)
+    import_stations_measurements(resources_manager, app_config)
+    # import_diseases(resources_manager, app_config)
 
 

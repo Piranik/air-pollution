@@ -89,3 +89,7 @@ class Database_Controller(object):
     # Find methods
     def find_in_collection(self, collection_name, query_object):
         return self.database[collection_name].find(query_object)
+
+
+    def drop_collection(self, collection_name):
+        self.database[collection_name].drop()

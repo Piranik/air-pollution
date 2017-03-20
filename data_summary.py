@@ -19,14 +19,13 @@ def compute_average(measurements):
         return float(measurements_sum) / len(measurements)
     return 0
 
-def create_summary_for_county(county_name, parameters, resource_manager):
-    stations = resource_manager.get_stations_by_county(county_name)
-    workbook = xlsxwriter.Workbook('summaries/' + county_name + '_summary.xlsx')
-    worksheet = workbook.add_worksheet()
+
+def write_summary_for_stations(worksheet, stations, parameters, resource_manager):
     last_row = 0
     for station in stations:
         # Headers
         worksheet.write(last_row, 0, station['internationalCode'])
+        worksheet.write(last_row+1, 0, station['county'])
         param_place_index = 4
         for parameter in parameters:
             worksheet.write(last_row, param_place_index, parameter['name'])
@@ -42,14 +41,33 @@ def create_summary_for_county(county_name, parameters, resource_manager):
                 measurements = resource_manager.get_measurements_for_station(
                     station['internationalCode'], year, month)
                 for measurement in measurements:
-                    worksheet.write(last_row,
-                                    PARAMETERS_POSITION[measurement['parameter_index']],
-                                    compute_average(measurement['measurements']))
+                    if measurement['parameter_index'] in PARAMETERS_POSITION:
+                        worksheet.write(last_row,
+                                        PARAMETERS_POSITION[measurement['parameter_index']],
+                                        compute_average(measurement['measurements']))
                 last_row += 1
+
+
+def create_summary_for_county(county_name, parameters, resources_manager):
+    stations = resources_manager.get_stations_by_county(county_name)
+
+    workbook = xlsxwriter.Workbook('summaries/' + county_name + '_summary.xlsx')
+    worksheet = workbook.add_worksheet()
+
+    write_summary_for_stations(worksheet, stations, parameters, resources_manager)
 
     workbook.close()
     print 'County %s done' % county_name
 
+
+def create_summary_for_used_stations(stations, parameters, resources_manager):
+    workbook = xlsxwriter.Workbook('summaries/used_stations_summary.xlsx')
+    worksheet = workbook.add_worksheet()
+
+    write_summary_for_stations(worksheet, stations, parameters, resources_manager)
+
+    workbook.close()
+    print 'Used stations summary done'
 
 
 def create_data_summary():

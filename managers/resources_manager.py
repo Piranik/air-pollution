@@ -1,6 +1,14 @@
 from managers.controllers.database_controller import Database_Controller
 
 
+def _parameter_data_guard(parameters):
+    if type(parameters) is list or type(parameters) is set:
+        return [int(parameter) for parameter in parameters]
+    elif type(parameters) is dict:
+        parameters['index'] = int(parameters['index'])
+        return parameters
+
+
 class Resources_Manager(object):
     """Resources Manager for Stations"""
     def __init__(self, app_config):
@@ -32,7 +40,8 @@ class Resources_Manager(object):
     def update_insert_station(self, new_station):
         station_parameters = []
         if 'parameters' in new_station:
-            station_parameters = list(new_station.pop('parameters'))
+            # Data guards
+            station_parameters = _parameter_data_guard(new_station.pop('parameters'))
         self.stations_collection.update(
             {'internationalCode' : new_station['internationalCode']},
             {
@@ -46,6 +55,15 @@ class Resources_Manager(object):
                 new_station['internationalCode']):
             self.database_controller.create_collection(
                 new_station['internationalCode'], 'station_measurement')
+
+    def update_station_parameters(self, station_name, new_parameters):
+        # Data guard
+        new_parameters = _parameter_data_guard(new_parameters)
+
+        self.stations_collection.update(
+            {'internationalCode' : station_name},
+            {'$addToSet' : {'parameters' :  {'$each': new_parameters}}}
+            )
 
     def update_station(self, new_station):
         station_collection = self.database_controller.get_collection(
@@ -73,6 +91,8 @@ class Resources_Manager(object):
 
     # Parameter methods
     def update_insert_parameter(self, new_parameter):
+        # Data guard
+        new_parameter = _parameter_data_guard(new_parameter)
         query_object = {
             'index': new_parameter['index']
         }
@@ -189,3 +209,11 @@ class Resources_Manager(object):
     def county_update_object(self, county_name):
         return {'$set' : {'name' : county_name}}
 
+    def remove_stations(self):
+        stations = self.get_stations()
+        for station in stations:
+            self.database_controller.drop_collection(station['internationalCode'])
+        self.database_controller.drop_collection(self.stations_collection.name)
+
+    def remove_parameters(self):
+        self.database_controller.drop_collection(self.parameters_collection.name)
