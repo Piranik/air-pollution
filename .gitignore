@@ -3,3 +3,5 @@ server/data_files/
 server/diseases_all/
 server/datasets_all
 server/summaries
+web/node_modules
+web/build
