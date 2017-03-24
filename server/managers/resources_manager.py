@@ -1,24 +1,30 @@
+from config_utils.config import ConfigYaml
 from managers.controllers.database_controller import Database_Controller
 
 
 def _parameter_data_guard(parameters):
-    if type(parameters) is list or type(parameters) is set:
+    if isinstance(parameters, list) or isinstance(parameters, set):
         return [int(parameter) for parameter in parameters]
-    elif type(parameters) is dict:
+    elif isinstance(parameters, dict):
         parameters['index'] = int(parameters['index'])
         return parameters
 
 
 class Resources_Manager(object):
     """Resources Manager for Stations"""
-    def __init__(self, app_config):
+    def __init__(self, app_config=None):
         super(Resources_Manager, self).__init__()
-        self.app_config = app_config
+
+        if not app_config:
+            app_config = ConfigYaml().get_config()
+
         database_controller = Database_Controller()
         self.stations_collection = database_controller.get_collection('air_stations')
         self.parameters_collection = database_controller.get_collection('parameters')
         self.diseases_collection = database_controller.get_collection('diseases')
         self.counties_collection = database_controller.get_collection('counties')
+        self.stations_statistics_collection = database_controller.get_collection(
+            'air_stations_statistics')
         self.database_controller = database_controller
 
     # County Methos
@@ -35,6 +41,17 @@ class Resources_Manager(object):
         disease_query = self.disease_query_object(new_disease)
         disease_update = self.disease_update_object(new_disease, county, start_date, end_date)
         self.diseases_collection.update(disease_query, disease_update, True)
+
+    # Statistics air stations
+    def get_stations_statistics(self):
+        return list(self.database_controller.find_in_collection(
+            self.stations_statistics_collection.name, {}))
+
+    def update_insert_station_statistics(self, used_station):
+        query_object = {'internationalCode': used_station['internationalCode']}
+        self.database_controller.update_object_in_collection(
+            self.stations_statistics_collection.name, {'$set': used_station},
+            query_object, True)
 
     # Station methods
     def update_insert_station(self, new_station):
@@ -63,7 +80,7 @@ class Resources_Manager(object):
         self.stations_collection.update(
             {'internationalCode' : station_name},
             {'$addToSet' : {'parameters' :  {'$each': new_parameters}}}
-            )
+        )
 
     def update_station(self, new_station):
         station_collection = self.database_controller.get_collection(
@@ -88,7 +105,6 @@ class Resources_Manager(object):
     def get_stations_by_county(self, county_name):
         return list(self.database_controller.find_in_collection(self.stations_collection.name,
                                                                 {'county': county_name}))
-
     # Parameter methods
     def update_insert_parameter(self, new_parameter):
         # Data guard
@@ -103,8 +119,16 @@ class Resources_Manager(object):
         for new_parameter in new_parameters:
             self.update_insert_parameter(new_parameter)
 
+    def mark_parameter_used(self, parameter):
+        parameter['used'] = True
+        self.update_insert_parameter(parameter)
+
     def get_parameter(self, parameter_index):
         return list(self.database_controller.find_in_collection(self.parameters_collection.name, {'index': str(parameter_index)}))[0]
+
+    def get_used_parameters(self):
+        return list(self.database_controller.find_in_collection(self.parameters_collection.name,
+                                                                {'used': True}))
 
     def get_all_parameters(self):
         return list(self.database_controller.find_in_collection(self.parameters_collection.name, {}))
@@ -148,7 +172,7 @@ class Resources_Manager(object):
             query_object['month'] = str(month)
 
         if parameter_index:
-            query_object['parameter_index'] = str(parameter_index)
+            query_object['parameter_index'] = parameter_index
         return query_object
 
     def create_station_query_object(self, date, parameter):

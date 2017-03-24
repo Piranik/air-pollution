@@ -23,18 +23,16 @@ class Data_Transformer(object):
         stations = self.resources_manager.get_stations()
         common_parameters = self.find_common_parameters(stations)
         common_stations = self.find_common_stations(common_parameters)
-        print common_stations
-        print len(common_stations)
 
         used_parameters = [parameter for parameter in self.parameters
                            if parameter['index'] in common_parameters]
 
         used_stations = [station for station in stations
                          if station['internationalCode'] in common_stations]
-        create_summary_for_used_stations(used_stations, used_parameters,
-                                         self.resources_manager)
-        # for station in stations:
-        #     transform_data_for_station(station)
+        used_stations_statistics = create_summary_for_used_stations(used_stations, used_parameters,
+                                                                    self.resources_manager)
+
+        self.save_used_parameters_and_stations(used_parameters, used_stations_statistics)
 
 
     def find_common_parameters(self, stations):
@@ -86,3 +84,11 @@ class Data_Transformer(object):
                 ok_flag = False
 
         return ok_flag
+
+    def save_used_parameters_and_stations(self, used_parameters, used_stations):
+        for parameter in used_parameters:
+            self.resources_manager.mark_parameter_used(parameter)
+
+        for station in used_stations:
+            print station
+            self.resources_manager.update_insert_station_statistics(station)

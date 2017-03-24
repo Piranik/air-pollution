@@ -1,3 +1,5 @@
 *.pyc
-data_files/
-data_summary.xlsx
+server/data_files/
+server/diseases_all/
+server/datasets_all
+server/summaries

@@ -1,4 +1,3 @@
-import sys
 from pymongo import MongoClient, ASCENDING
 
 DEFAULT_STATION_INDEXES = [
@@ -28,6 +27,10 @@ DEFAULT_COUNTIES_COLLECTION_INDEXES = [
     ('name', ASCENDING)
 ]
 
+DEFAULT_USED_STATIONS_COLLECTION_INDEXES = [
+    ('internationalCode', ASCENDING),
+    ('county', ASCENDING)
+]
 
 class Database_Controller(object):
 
@@ -39,18 +42,28 @@ class Database_Controller(object):
 
     def create_initial_collections(self):
         current_collections = self.database.collection_names()
+
         if 'air_stations' not in current_collections:
             air_stations_collection = self.database.create_collection('air_stations')
             air_stations_collection.create_index(DEFAULT_STATION_COLLECTION_INDEXES, unique=True)
+
         if 'parameters' not in current_collections:
             parameters_collection = self.database.create_collection('parameters')
             parameters_collection.create_index(DEFAULT_PARAMETER_INDEXES, unique=True)
+
         if 'diseases' not in current_collections:
             diseases_collection = self.database.create_collection('diseases')
             diseases_collection.create_index(DEFAULT_DISEASES_COLLECTION_INDEXES, unique=True)
+
         if 'counties' not in current_collections:
             counties_collection = self.database.create_collection('counties')
             counties_collection.create_index(DEFAULT_COUNTIES_COLLECTION_INDEXES, unique=True)
+
+        if 'air_stations_statistics' not in current_collections:
+            air_stations_statistics_collection = self.database.create_collection(
+                'air_stations_statistics')
+            air_stations_statistics_collection.create_index(
+                DEFAULT_USED_STATIONS_COLLECTION_INDEXES, unique=True)
 
     def check_connection(self):
         return self.db_connection['connect']
