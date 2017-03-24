@@ -16,8 +16,8 @@ class Statistics_Manager(object):
     def compute_element_index_codification(self, elements):
         elements_indexes = {}
         index = 0
-        for x in elements:
-            elements_indexes[x: index]
+        for element in elements:
+            elements_indexes[element] = index
             index += 1
         return elements_indexes
 
@@ -29,7 +29,7 @@ class Statistics_Manager(object):
 
         """
 
-        counties = self.resources_manager.get_counties()
+        counties = [x['name'] for x in self.resources_manager.get_counties()]
         counties = sorted(counties)
 
         parameters = [x['index'] for x in self.resources_manager.get_used_parameters()]
@@ -44,6 +44,8 @@ class Statistics_Manager(object):
                       for _ in counties]
 
         stations_in_counties = [set() for county in counties]
+
+        # Create 4d matrix of statistics for each county
         for station in stations_statistics:
             county_index = counties_indexes[station['county']]
             stations_in_counties[county_index].add(station['internationalCode'])
@@ -51,9 +53,9 @@ class Statistics_Manager(object):
                 statistic_year = int(statistic['year'])
                 if statistic_year >= _START_YEAR:
                     year_index = statistic_year - _START_YEAR
-                    month = str(statistic['month'])
+                    month = int(statistic['month']) - 1
                     for parameter in statistic['values']:
-                        parameter_index = parameter_indexes[parameter]
+                        parameter_index = parameter_indexes[int(parameter)]
                         statistics[county_index][year_index][month][parameter_index] += statistic['values'][parameter]
 
         for county in counties:
