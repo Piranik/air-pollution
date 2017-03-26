@@ -16,29 +16,53 @@ const mapAccessToken = 'pk.eyJ1IjoidGVvZG9yc3RlZnUiLCJhIjoiY2owbDY3dzBqMDJhajJxc
 
 @connect(state => state)
 export default class MapComponent extends Component {
-    static propTypes = {
-        dispatch: React.PropTypes.func,
-        map_data: React.PropTypes.object
-    }
+    // static propTypes = {
+    //     dispatch: React.PropTypes.func,
+    //     map_data: React.PropTypes.object
+    // }
 
     render() {
-        console.log(position);
-        return (
-            <Col
-                xs="80%"
-                sm="80%"
-                md="80%"
-                lg="80%"
-                >
-                <Map style={{height: '100%', width: '100%'}} center={position} zoom={20}>
-                    <TileLayer
-                      attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                      url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
-                    />
-                    // <GeoJSON data={this.props.map} />
-                </Map>
-            </Col>
-        );
+        const {state} = this.props
+
+        console.log(state.mapCoords.centerPosition)
+        console.log("!!!!!", state.mapCoords.data)
+        if (state.mapCoords.data.length == 0) {
+            return (
+                <Col
+                    xs="80%"
+                    sm="80%"
+                    md="80%"
+                    lg="80%"
+                    >
+                    <Map style={{height: '100%', width: '100%'}} center={state.mapCoords.centerPosition} zoom={7} dragging={false} zoomControl={false} doubleClickZoom={false} scrollWheelZoom={false}>
+                        <TileLayer
+                          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                          url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
+                        />
+                        // <GeoJSON data={state.mapCoords.data} />
+                    </Map>
+                </Col>
+            );
+        }
+        else {
+            return (
+                <Col
+                    xs="80%"
+                    sm="80%"
+                    md="80%"
+                    lg="80%"
+                    >
+                    <Map style={{height: '100%', width: '100%'}} center={state.mapCoords.centerPosition} zoom={7} dragging={false} zoomControl={false} doubleClickZoom={false} scrollWheelZoom={false}>
+                        <TileLayer
+                          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                          url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
+                        />
+                        <GeoJSON data={state.mapCoords.data} />
+                    </Map>
+                </Col>
+            );
+        }
+
     }
 
 }

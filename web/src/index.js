@@ -32,6 +32,4 @@ ReactDOM.render(
 )
 
 
-store.dispatch(fetchNewspapers())
-store.dispatch(fetchCategories())
-store.dispatch(fetchRomaniaMapCoords())
+// store.dispatch(fetchRomaniaMapCoords())

@@ -1,12 +1,56 @@
 import fetch from 'isomorphic-fetch'
 
 
-export const REQUEST_NEWSPAPERS = 'REQUEST_NEWSPAPERS'
-export const RECEIVE_NEWSPAPERS = 'RECEIVE_NEWSPAPERS'
-export const REQUEST_CATEGORIES = 'REQUEST_CATEGORIES'
-export const RECEIVE_CATEGORIES = 'RECEIVE_CATEGORIES'
 export const REQUEST_ROMANIA_MAP_COORDS = 'REQUEST_ROMANIA_MAP_COORDS'
 export const RECEIVE_ROMANIA_MAP_COORDS = 'RECEIVE_ROMANIA_MAP_COORDS'
+export const REQUEST_AIR_POLLUTION_STATISTICS = 'REQUEST_AIR_POLLUTION_STATISTICS'
+export const RECEIVE_AIR_POLLUTION_STATISTICS = 'RECEIVE_AIR_POLLUTION_STATISTICS'
+export const REQUEST_COUNTIES = 'REQUEST_COUNTIES'
+export const RECEIVE_COUNTIES = 'RECEIVE_COUNTIES'
+export const REQUEST_PARAMETERS= 'REQUEST_PARAMETERS'
+export const RECEIVE_PARAMETERS = 'RECEIVE_PARAMETERS'
+
+
+function requestParameters() {
+  return {
+    type: REQUEST_PARAMETERS
+  }
+}
+
+function receiveParameters(response) {
+  return {
+    type: RECEIVE_PARAMETERS,
+    parameters: response.parameters
+  }
+}
+
+
+function requestCounties() {
+  return {
+    type: REQUEST_COUNTIES
+  }
+}
+
+function receiveCounties(response) {
+  return {
+    type: RECEIVE_COUNTIES,
+    counties: response.counties
+  }
+}
+
+function requestAirPollutionStatistics() {
+  return {
+    type: REQUEST_AIR_POLLUTION_STATISTICS
+  }
+}
+
+function receiveAirPollutionStatistics(response) {
+  return {
+    type: RECEIVE_AIR_POLLUTION_STATISTICS,
+    statistics: response.statistics,
+    county_stations: response.number_of_stations
+  }
+}
 
 function requestRomaniaMapCoords() {
   return {
@@ -14,66 +58,59 @@ function requestRomaniaMapCoords() {
   }
 }
 
-function receiveRomaniaMapCoords() {
+function receiveRomaniaMapCoords(response) {
   return {
-    type: REQUEST_ROMANIA_MAP_COORDS
+    type: RECEIVE_ROMANIA_MAP_COORDS,
+    coords: JSON.parse(response.coords),
+    position: response.center
   }
 }
 
-function requestNewspapers() {
-  return {
-    type: REQUEST_NEWSPAPERS
+export function fetchParameters() {
+  return function(dispatch) {
+    dispatch(requestParameters());
+    return fetch('http://localhost:8000/api/used_parameters')
+      .then(response => response.json)
+        .then(json => {
+          console.log('Got parameters');
+          dispatch(receiveParameters(json));
+        })
   }
 }
 
-function requestCategories() {
-	return {
-		type: REQUEST_CATEGORIES
-	}
-}
-
-function receiveNewspapers(json) {
-  return {
-    type: RECEIVE_NEWSPAPERS,
-    newspapers: json.newspapers.map(function(item) {
-    	item.selected = false;
-    	item.addon_selected = 0;
-    	return item;
-	}),
-    total: json.count
+export function fetchCounties() {
+  return function(dispatch) {
+    dispatch(requestCounties());
+    return fetch('http://localhost:8000/api/counties')
+      .then(response => response.json)
+        .then(json => {
+          console.log('Got counties');
+          dispatch(receiveCounties(json));
+        })
   }
 }
 
-function receiveCategories(json) {
-  return {
-    type: RECEIVE_CATEGORIES,
-    categories: json.categories,
-    total: json.count
+export function fetchMapCoords() {
+  return function(dispatch) {
+    dispatch(requestRomaniaMapCoords());
+    return fetch('http://localhost:8000/api/ro_map_data')
+      .then(response => response.json())
+        .then(json => {
+          console.log('Got coords', json.coords.length);
+          dispatch(receiveRomaniaMapCoords(json))
+        })
   }
 }
 
-export function fetchNewspapers() {
-	return function (dispatch) {
-		dispatch(requestNewspapers());
-
-		return fetch('http://localhost:8000/newspapers')
-			.then(response => response.json())
-      		.then(json => {
-      			console.log(json)
-      			dispatch(receiveNewspapers(json))
-      		})
-	}
+export function fetchAirPollutionStatistics() {
+  return function(dispatch) {
+    dispatch(requestAirPollutionStatistics());
+    return fetch('http://localhost:8000/api/statistics/air_pollution_county')
+      .then(response => response.json())
+        .then(json => {
+          console.log('Got Air Statistics')
+          dispatch(receiveAirPollutionStatistics(json))
+        })
+  }
 }
 
-export function fetchCategories() {
-	return function (dispatch) {
-		dispatch(requestCategories());
-
-		return fetch('http://localhost:8000/categories')
-			.then(response => response.json())
-      		.then(json => {
-      			console.log(json)
-      			dispatch(receiveCategories(json))
-      		})
-	}
-}
