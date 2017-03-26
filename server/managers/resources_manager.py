@@ -10,6 +10,11 @@ def _parameter_data_guard(parameters):
         return parameters
 
 
+def _convert_objectId(document):
+    document['_id'] = str(document['_id'])
+    return document
+
+
 class Resources_Manager(object):
     """Resources Manager for Stations"""
     def __init__(self, app_config=None):
@@ -34,7 +39,8 @@ class Resources_Manager(object):
         self.counties_collection.update(county_query, county_update, True)
 
     def get_counties(self):
-        return list(self.database_controller.find_in_collection(self.counties_collection.name, {}))
+        counties = self.database_controller.find_in_collection(self.counties_collection.name, {})
+        return [_convert_objectId(x) for x in counties]
 
     # Disease Methods
     def update_insert_disease(self, new_disease, county, start_date, end_date):

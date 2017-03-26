@@ -38,14 +38,17 @@ if __name__ == '__main__':
 
         return response
 
-    @app.route('/api/get_counties')
+    @app.route('/api/counties')
     def get_counties():
         counties = resources_manager.get_counties()
         response = {
             'counties': counties,
             'counties_number': len(counties)
         }
+        response = jsonify(response)
+        response.status_code = 200
 
+        return response
 
     @app.route('/api/statistics/air_pollution_county')
     def get_statistics_for_used_stations():
