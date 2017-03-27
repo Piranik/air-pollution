@@ -133,11 +133,14 @@ class Resources_Manager(object):
         return list(self.database_controller.find_in_collection(self.parameters_collection.name, {'index': str(parameter_index)}))[0]
 
     def get_used_parameters(self):
-        return list(self.database_controller.find_in_collection(self.parameters_collection.name,
-                                                                {'used': True}))
+        used_parameters = self.database_controller.find_in_collection(
+            self.parameters_collection.name, {'used': True})
+        return list(_convert_objectId(x) for x in used_parameters)
 
     def get_all_parameters(self):
-        return list(self.database_controller.find_in_collection(self.parameters_collection.name, {}))
+        parameters = self.database_controller.find_in_collection(self.parameters_collection.name,
+                                                                 {})
+        return [_convert_objectId(x) for x in parameters]
 
     # Get Methods
     def get_stations(self):

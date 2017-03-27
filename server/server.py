@@ -65,6 +65,19 @@ if __name__ == '__main__':
         return response
 
 
+    @app.route('/api/used_parameters')
+    def get_parameters():
+        used_paramters = resources_manager.get_used_parameters()
+        response = {
+            'parameters': used_paramters,
+            'parameters_len': len(used_paramters)
+        }
+        response = jsonify(response)
+        response.status_code = 200
+
+        return response
+
+
     # listen on port 8080 from any host in local network
     app.run(threaded=True, host='0.0.0.0', port='8000', )
 
