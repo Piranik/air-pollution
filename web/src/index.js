@@ -24,12 +24,14 @@ ReactDOM.render(
   <Provider store={store}>
     <Router history={history}>
       <Route path="/" component={WelcomeView}/>
-      <Route path="/air-pollution" component={AirPollutionView}/>
+
+
+
+
+      <Route path="/air-pollution" component={AirPollutionView} />
       <Route path="/disease-evolution" component={DiseaseEvolutionView}/>
     </Router>
   </Provider>,
   document.getElementById('app')
 )
 
-
-// store.dispatch(fetchRomaniaMapCoords())

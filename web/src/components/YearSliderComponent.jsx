@@ -33,13 +33,12 @@ const marks = {
 };
 
 
-
 @connect(state => state)
 export default class OptionPanelComponent extends Component {
 
     render() {
         return(
-            <Row style={{width: '60em', margin: 'auto'}}>
+            <Row style={{width: '50em', margin: 'auto'}}>
                 <Col
                 xs="25%"
                 sm="25%"
@@ -47,7 +46,7 @@ export default class OptionPanelComponent extends Component {
                 lg="25%"
                 style={{
                     color: 'green',
-                    fontSize: '5.8em'
+                    fontSize: '3.8em'
                 }}>
                     &#9658;
                 </Col>
@@ -57,7 +56,7 @@ export default class OptionPanelComponent extends Component {
                 md="75%"
                 lg="75%"
                 style={{
-                    marginTop: '2.5em'
+                    marginTop: '1.0em'
                 }}
                 >
                     <Slider marks={marks} defaultValue={28.56} />

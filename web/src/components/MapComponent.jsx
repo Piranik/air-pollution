@@ -34,7 +34,7 @@ export default class MapComponent extends Component {
                     md="80%"
                     lg="80%"
                     >
-                    <Map style={{height: '100%', width: '100%'}} center={state.mapCoords.centerPosition} zoom={7} dragging={false} zoomControl={false} doubleClickZoom={false} scrollWheelZoom={false}>
+                    <Map style={{height: '100%', width: '100%'}} center={state.mapCoords.centerPosition} zoom={6}  zoomControl={false} doubleClickZoom={false} >
                         <TileLayer
                           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                           url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
@@ -47,12 +47,12 @@ export default class MapComponent extends Component {
         else {
             return (
                 <Col
-                    xs="80%"
-                    sm="80%"
-                    md="80%"
-                    lg="80%"
+                    xs="70%"
+                    sm="70%"
+                    md="70%"
+                    lg="70%"
                     >
-                    <Map style={{height: '100%', width: '100%'}} center={state.mapCoords.centerPosition} zoom={7} dragging={false} zoomControl={false} doubleClickZoom={false} scrollWheelZoom={false}>
+                    <Map style={{height: '100%', width: '100%'}} center={state.mapCoords.centerPosition} zoom={6}  zoomControl={false} doubleClickZoom={false} >
                         <TileLayer
                           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                           url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'

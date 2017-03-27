@@ -70,7 +70,7 @@ export function fetchParameters() {
   return function(dispatch) {
     dispatch(requestParameters());
     return fetch('http://localhost:8000/api/used_parameters')
-      .then(response => response.json)
+      .then(response => response.json())
         .then(json => {
           console.log('Got parameters');
           dispatch(receiveParameters(json));
@@ -82,7 +82,7 @@ export function fetchCounties() {
   return function(dispatch) {
     dispatch(requestCounties());
     return fetch('http://localhost:8000/api/counties')
-      .then(response => response.json)
+      .then(response => response.json())
         .then(json => {
           console.log('Got counties');
           dispatch(receiveCounties(json));
