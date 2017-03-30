@@ -49,7 +49,7 @@ class StationsInfoParser(object):
         nr_rows, _ = xls_parser.get_sheet_dimension()
 
         for row in range(2, nr_rows):
-            county_cell_value = xls_parser.get_value(row, 0)
+            county_cell_value = str(xls_parser.get_value(row, 0))
             county_locality_cell_value = xls_parser.get_value(row, 1)
             station_international_code = str(xls_parser.get_value(row, 4))
             station_cell_format = xls_parser.get_format_of_cell(row, 4)
@@ -72,6 +72,7 @@ class StationsInfoParser(object):
     def add_new_county_entry(self, county_stations_organization, county, county_locality, stations):
         if not county and county_locality:
             county = county_locality
+        county = county.strip().lower()
         county_stations_organization[county] = stations
 
     def parse(self, stations_filename, stations_distribution_filename):

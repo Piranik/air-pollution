@@ -38,7 +38,6 @@ class Data_Transformer(object):
     def find_common_parameters(self, stations):
         common_parameters = {}
         parameters_codification = {}
-
         for parameter in self.parameters:
             common_parameters[parameter['index']] = set()
             parameters_codification[parameter['index']] = parameter['name']

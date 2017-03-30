@@ -11,7 +11,7 @@ if __name__ == '__main__':
     # downloader.prepare_environment()
     # downloader.download_stations()
     # # downloader.download_diseases()
-    # import_data(app_config)
+    import_data(app_config)
     data_transformer = Data_Transformer(app_config)
     data_transformer.transform_data()
 

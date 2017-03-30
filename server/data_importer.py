@@ -86,8 +86,8 @@ def import_data(app_config):
     # ensure db connection
     resources_manager = Resources_Manager(app_config)
 
-    import_stations(resources_manager, app_config)
-    import_stations_measurements(resources_manager, app_config)
+    # import_stations(resources_manager, app_config)
+    # import_stations_measurements(resources_manager, app_config)
     # import_diseases(resources_manager, app_config)
 
 

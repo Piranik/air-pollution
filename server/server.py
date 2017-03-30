@@ -68,6 +68,11 @@ if __name__ == '__main__':
     @app.route('/api/used_parameters')
     def get_parameters():
         used_paramters = resources_manager.get_used_parameters()
+        used_paramters.append({
+            'name': 'Air Quality Index',
+            'formula': 'AQI',
+            'index': 1000
+            })
         response = {
             'parameters': used_paramters,
             'parameters_len': len(used_paramters)

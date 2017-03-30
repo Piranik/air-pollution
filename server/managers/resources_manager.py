@@ -1,6 +1,6 @@
 from config_utils.config import ConfigYaml
 from managers.controllers.database_controller import Database_Controller
-
+from bson.objectid import ObjectId
 
 def _parameter_data_guard(parameters):
     if isinstance(parameters, list) or isinstance(parameters, set):
@@ -14,6 +14,10 @@ def _convert_objectId(document):
     document['_id'] = str(document['_id'])
     return document
 
+def _set_objectId(document):
+    if '_id' in document:
+        document['_id'] = ObjectId(document['_id'])
+    return document
 
 class Resources_Manager(object):
     """Resources Manager for Stations"""
@@ -127,6 +131,7 @@ class Resources_Manager(object):
 
     def mark_parameter_used(self, parameter):
         parameter['used'] = True
+        _set_objectId(parameter)
         self.update_insert_parameter(parameter)
 
     def get_parameter(self, parameter_index):
