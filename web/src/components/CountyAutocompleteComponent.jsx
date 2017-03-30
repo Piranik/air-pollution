@@ -5,6 +5,7 @@ import React, { Component } from 'react'
 import { AutoComplete } from 'antd';
 
 import {changeCountyAction} from '../actions/DisplayActions.js';
+import {store} from '../stores/store';
 
 @connect(state => state)
 export default class OptionPanelComponent extends Component {
@@ -26,7 +27,7 @@ export default class OptionPanelComponent extends Component {
   onSelectHandler = (value) => {
     console.log(value);
     const {dispatch} = store
-    dispatch(changeCountyAction())
+    dispatch(changeCountyAction(value))
   }
 
   render() {
@@ -35,9 +36,9 @@ export default class OptionPanelComponent extends Component {
       <AutoComplete
         dataSource={dataSource}
         style={{ width: '10em', height: '2.3em' }}
-        placeholder="Ex: Bucuresti"
+        placeholder="Ex: bucuresti"
         onChange={this.handleChange}
-        onSelect={this.onSelect}
+        onSelect={this.onSelectHandler}
       />
     );
   }

@@ -1,40 +1,60 @@
-import { render } from 'react-dom'
-import { Router, Route, Link } from 'react-router'
-import { connect } from 'react-redux'
-import React, { Component } from 'react'
-import { Button, Alert, Spinner, Row, Col } from 'elemental'
-import { Slider } from 'antd'
+import { render } from 'react-dom';
+import { Router, Route, Link } from 'react-router';
+import { connect } from 'react-redux';
+import React, { Component } from 'react';
+import { Button, Alert, Spinner, Row, Col } from 'elemental';
+import { Slider } from 'antd';
 
-const marks = {
-    0: {
-        label: <strong>2010</strong>
-    },
-    14.28: {
-        label: <strong>2011</strong>
-    },
-    28.56: {
-        label: <strong>2012</strong>
-    },
-    42.84: {
-        label: <strong>2013</strong>
-    },
-    57.12: {
-        label: <strong>2014</strong>
-    },
-    71.4: {
-        label: <strong>2015</strong>
-    },
-    84.68: {
-        label: <strong>2016</strong>
-    },
-    100: {
-        label: <strong>2017</strong>
-    },
-};
+import { changeDisplayYear } from '../actions/DisplayActions.js';
+import { store } from '../stores/store.js'
 
+const MONTHS = ["January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
+
+const marks = (function () {
+    let marks = {}
+    let currentPosition = 0;
+    const step = 12;
+
+    for (let i = 2010; i <= 2017; i ++) {
+        marks[currentPosition] = {
+            label: <strong>{i}</strong>
+        }
+        currentPosition += step;
+    }
+    return marks;
+})();
+
+const formatterMarks = (function() {
+    let formatterMarks = {}
+    const monthPrag = 1;
+    let currentPosition = 0;
+
+    for (let i = 2010; i < 2017; i ++) {
+        for (let j = 0; j < 12; j ++) {
+            formatterMarks[currentPosition] = i + ' ' + MONTHS[j];
+            currentPosition += monthPrag;
+        }
+    }
+    formatterMarks[currentPosition] = '2017';
+    return formatterMarks;
+})();
 
 @connect(state => state)
 export default class OptionPanelComponent extends Component {
+
+    onChangeValueHandler = (value) => {
+        console.log(value)
+        const {dispatch} = store;
+        const month = value % 12;
+        const year =  2010 + Math.floor(value / 12);
+        dispatch(changeDisplayYear(year, month));
+    }
+
+    sliderFormatter = (value) => {
+        return formatterMarks[value];
+    }
 
     render() {
         return(
@@ -59,7 +79,7 @@ export default class OptionPanelComponent extends Component {
                     marginTop: '1.0em'
                 }}
                 >
-                    <Slider marks={marks} defaultValue={28.56} />
+                    <Slider max={84} marks={marks} tipFormatter={this.sliderFormatter} defaultValue={24} onChange={this.onChangeValueHandler}/>
                 </Col>
             </Row>
         );

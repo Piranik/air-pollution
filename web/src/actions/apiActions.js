@@ -45,6 +45,7 @@ function requestAirPollutionStatistics() {
 }
 
 function receiveAirPollutionStatistics(response) {
+  console.log(response)
   return {
     type: RECEIVE_AIR_POLLUTION_STATISTICS,
     statistics: response.statistics,

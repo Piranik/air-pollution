@@ -27,7 +27,6 @@ export default class OptionPanelComponent extends Component {
             return element['name'];
         });
 
-        console.log(params)
         return (
             <Col
             xs="20%"
@@ -38,7 +37,6 @@ export default class OptionPanelComponent extends Component {
                 textAlign: 'center',
                 backgroundColor: '#BAD1D0',
                 height: '100%',
-                // width: '100%',
                 border: "5px solid",
                 borderTopLeftRadius: "2em",
                 borderBottomLeftRadius: "2em"

@@ -32,11 +32,10 @@ export default class ParametersDropdownComponent extends Component {
     onParametersDropdownSelect = (value) => {
         const {dispatch} = store;
         console.log('Value in handler ', value)
-        dispatch(changeParameterAction(this.props.state.usedParameters.data[value.key].name))
+        dispatch(changeParameterAction(this.props.state.usedParameters.data[value.key]))
     }
 
     render() {
-        console.log(this.props.state.selectedParameter)
         const menu = (
             <Menu onClick={this.onParametersDropdownSelect}>
                 {this.createDropdownOptions()}
@@ -46,7 +45,7 @@ export default class ParametersDropdownComponent extends Component {
         return (
                 <Dropdown overlay={menu} trigger={['click']}>
                   <Button style={{ marginLeft: 8, width: '13em' }}>
-                    {this.props.state.selectedParameter} <Icon type="down" />
+                    {this.props.state.selectedParameter.name} <Icon type="down" />
                   </Button>
                 </Dropdown>
         );
