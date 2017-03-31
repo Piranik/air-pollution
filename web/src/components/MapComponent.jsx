@@ -113,8 +113,7 @@ export default class MapComponent extends Component {
         const monthIndex = Number.parseInt(selectedMonth, 10);
         let values = [];
         if (countyIndex !== undefined && parameterIndex != undefined) {
-            console.log(paramsIndexCodification)
-            console.log(airPollution.data[countyIndex][yearIndex][monthIndex])
+            // console.log(airPollution)
             return airPollution.data[countyIndex][yearIndex][monthIndex][parameterIndex];
         }
 

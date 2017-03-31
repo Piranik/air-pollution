@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import { Button, Alert, Spinner, Row, Col } from 'elemental';
 import { Slider } from 'antd';
 
-import { changeDisplayYear } from '../actions/DisplayActions.js';
+import { changeDisplayYear, playButtonPressed, stopButtonPressed, nextStepInTimeline } from '../actions/DisplayActions.js';
 import { store } from '../stores/store.js'
 
 const MONTHS = ["January", "February", "March", "April", "May", "June",
@@ -47,13 +47,48 @@ export default class OptionPanelComponent extends Component {
     onChangeValueHandler = (value) => {
         console.log(value)
         const {dispatch} = store;
-        const month = value % 12;
+        const month = '' + value % 12;
         const year =  2010 + Math.floor(value / 12);
         dispatch(changeDisplayYear(year, month));
     }
 
     sliderFormatter = (value) => {
         return formatterMarks[value];
+    }
+
+    nextStepInTimeline = () => {
+        const {state} = this.props;
+        const {dispatch} = store;
+        const nextMonth = (state.selectedMonth + 1) % 12
+        let nextYear = state.selectedYear
+
+        if (nextMonth == 0) {
+            nextYear += 1;
+        }
+
+        if (state.playButtonPressed == true) {
+            dispatch(nextStepInTimeline(nextYear, nextMonth));
+            setTimeout(this.nextStepInTimeline, 1000);
+        }
+    }
+
+    onPlayButtonHandler = () => {
+        const {dispatch} = store;
+
+        dispatch(playButtonPressed());
+        setTimeout(this.nextStepInTimeline, 1000);
+
+    }
+
+    onStopButtonHandler = () => {
+        const {dispatch} = store;
+        dispatch(stopButtonPressed());
+    }
+
+    convertToMarkIndex = () => {
+        const {selectedYear, selectedMonth} = this.props.state;
+        console.log(selectedYear, selectedMonth);
+        return (selectedYear - 2010) * 12 + Number.parseInt(selectedMonth, 10);
     }
 
     render() {
@@ -65,10 +100,12 @@ export default class OptionPanelComponent extends Component {
                 md="25%"
                 lg="25%"
                 style={{
-                    color: 'green',
                     fontSize: '3.8em'
-                }}>
-                    &#9658;
+                }} >
+                    { this.props.state.playButtonPressed == true ?
+                        <span style={{color: 'red'}} onClick={this.onStopButtonHandler}> &#9612;&#9612;</span> :
+                        <span style={{color: 'green'}} onClick={this.onPlayButtonHandler}> &#9658; </span>
+                    }
                 </Col>
                 <Col
                 xs="75%"
@@ -79,7 +116,7 @@ export default class OptionPanelComponent extends Component {
                     marginTop: '1.0em'
                 }}
                 >
-                    <Slider max={84} marks={marks} tipFormatter={this.sliderFormatter} defaultValue={24} onChange={this.onChangeValueHandler}/>
+                    <Slider max={83} marks={marks} tipFormatter={this.sliderFormatter} value={this.convertToMarkIndex()} onChange={this.onChangeValueHandler}/>
                 </Col>
             </Row>
         );
