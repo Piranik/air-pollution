@@ -70,7 +70,7 @@ function receiveRomaniaMapCoords(response) {
 export function fetchParameters() {
   return function(dispatch) {
     dispatch(requestParameters());
-    return fetch('http://localhost:8000/api/used_parameters')
+    return fetch('http://localhost:8000/api/viewed_parameters')
       .then(response => response.json())
         .then(json => {
           console.log('Got parameters');

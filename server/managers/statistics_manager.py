@@ -22,12 +22,14 @@ class Statistics_Manager(object):
         self.counties = self.resources_manager.get_counties()
 
     @staticmethod
-    def compute_air_quality_index(params_codif, params_values):
+    def compute_air_quality_index(params_codif, params_values, debug=False):
         max_index = 0
         for param_indentifier in AQI_INDEXES:
             for index, (val1, val2) in enumerate(AQI_INDEXES[param_indentifier]):
                 param_value = params_values[params_codif[param_indentifier]]
                 if val1 <= param_value and param_value < val2:
+                    if debug and index == 3:
+                        print param_indentifier, (val1, val2)
                     max_index = max(max_index, index)
                     break
         return max_index
@@ -52,7 +54,7 @@ class Statistics_Manager(object):
         counties = [x['name'] for x in self.resources_manager.get_counties()]
         counties = sorted(counties)
 
-        parameters = [x['index'] for x in self.resources_manager.get_used_parameters()]
+        parameters = [x['index'] for x in self.resources_manager.get_viewed_parameters()]
         parameters = sorted(parameters)
 
         counties_indexes = self.compute_element_index_codification(counties)
@@ -75,8 +77,9 @@ class Statistics_Manager(object):
                     year_index = statistic_year - _START_YEAR
                     month = int(statistic['month']) - 1
                     for parameter in statistic['values']:
-                        parameter_index = parameter_indexes[int(parameter)]
-                        statistics[county_index][year_index][month][parameter_index] += statistic['values'][parameter]
+                        if int(parameter) in parameter_indexes:
+                            parameter_index = parameter_indexes[int(parameter)]
+                            statistics[county_index][year_index][month][parameter_index] += statistic['values'][parameter]
 
         for county in counties:
             county_index = counties_indexes[county]
@@ -88,7 +91,14 @@ class Statistics_Manager(object):
                             statistics[county_index][year_index][month_index][param_index] /= stations_no
                     aqi_index = self.compute_air_quality_index(
                         parameter_indexes,
-                        statistics[county_index][year_index][month_index])
+                        statistics[county_index][year_index][month_index], debug=True)
+                    if year_index == 2 and month_index == 2:
+                        print aqi_index
+                        print parameter_indexes
+                        print statistics[county_index][year_index][month_index][4]
+                        aqi_index = self.compute_air_quality_index(
+                            parameter_indexes,
+                            statistics[county_index][year_index][month_index], debug=True)
                     statistics[county_index][year_index][month_index].append(aqi_index)
 
 

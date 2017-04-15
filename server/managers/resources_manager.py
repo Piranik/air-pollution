@@ -134,12 +134,22 @@ class Resources_Manager(object):
         _set_objectId(parameter)
         self.update_insert_parameter(parameter)
 
+    def mark_parameter_viewed(self, parameter):
+        parameter['view'] = True
+        _set_objectId(parameter)
+        self.update_insert_parameter(parameter)
+
     def get_parameter(self, parameter_index):
         return list(self.database_controller.find_in_collection(self.parameters_collection.name, {'index': str(parameter_index)}))[0]
 
     def get_used_parameters(self):
         used_parameters = self.database_controller.find_in_collection(
             self.parameters_collection.name, {'used': True})
+        return list(_convert_objectId(x) for x in used_parameters)
+
+    def get_viewed_parameters(self):
+        used_parameters = self.database_controller.find_in_collection(
+            self.parameters_collection.name, {'view': True})
         return list(_convert_objectId(x) for x in used_parameters)
 
     def get_all_parameters(self):
@@ -169,8 +179,8 @@ class Resources_Manager(object):
             self.insert_measurement(station['internationalCode'],
                                     parameter_info, parameter_measurements, date, file_name)
 
-    def get_measurements_for_station(self, station_name, year=None,
-        month=None, parameter_index=None):
+    def get_measurements_for_station(self, station_name, year=None, month=None,
+        parameter_index=None):
         if self.database_controller.collection_exists(station_name):
             query_object = self.create_query_object_for_find(year, month, parameter_index)
             measurements = self.database_controller.find_in_collection(station_name, query_object)

@@ -65,17 +65,17 @@ if __name__ == '__main__':
         return response
 
 
-    @app.route('/api/used_parameters')
+    @app.route('/api/viewed_parameters')
     def get_parameters():
-        used_paramters = resources_manager.get_used_parameters()
-        used_paramters.append({
+        viewed_paramters = resources_manager.get_viewed_parameters()
+        viewed_paramters.append({
             'name': 'Air Quality Index',
             'formula': 'AQI',
             'index': 1000
             })
         response = {
-            'parameters': used_paramters,
-            'parameters_len': len(used_paramters)
+            'parameters': viewed_paramters,
+            'parameters_len': len(viewed_paramters)
         }
         response = jsonify(response)
         response.status_code = 200

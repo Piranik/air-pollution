@@ -30,7 +30,7 @@ const initialState = {
     isFetchinng: false
   },
   selectedYear: 2012,
-  selectedMonth: '0',
+  selectedMonth: 0,
   currentMonthStatistics: [],
   selectedParameter: {
     name: 'Air Quality Index',
@@ -39,44 +39,44 @@ const initialState = {
   },
   playMode: false, // this enables play mode
   interfaceDisabled: false, // this will unlock the interface
-  selectedCounty: 'All Country',
+  selectedCounty: 'romania',
   paramsLevels: {
-    3: [53, 100, 360, 649, 1249], // Oxizi de Azot
-    10: [50, 100, 200, 300, 400], // Monoxid de Azot
-    1: [35, 75, 185, 304,  604], // Dioxid de sulf
-    9: [null, null, 164, 204, 404], // Ozon
-    4: [50, 100, 150, 200, 300], // PM 10 aut
-    5: [50, 100, 150, 200, 300], // PM 10 grv
-    19: [2, 10, 25, 40, 50], // Viteza vant
-    22: [850, 900, 990, 1050, 1100], // Presiune
+    3: [53, 100, 360, 649, 1249, 2049], // Oxizi de Azot
+    10: [50, 100, 200, 300, 350, 400], // Monoxid de Azot
+    1: [35, 75, 185, 304, 604, 1004], // Dioxid de sulf
+    9: [125, null, 164, 204, 404, 604], // Ozon
+    4: [54, 154, 254, 354, 424, 604], // PM 10 aut
+    5: [54, 154, 254, 354, 424, 604], // PM 10 grv
+    19: [2, 10, 25, 40, 50, 60], // Viteza vant
+    22: [900, 1020, 1050, 1100, 1150, 1200], // Presiune
 
     24: { // Precipitatii
-      '0': [37, 39,1, 41, 43],
-      '1': [35, 37.5, 40, 43],
-      '2': [34, 36.5, 39, 42],
-      '3': [44, 48.2, 52, 55],
-      '4': [59, 63.4, 67, 70],
-      '5': [77, 81.0, 85, 88],
-      '6': [54, 58.3, 62, 65],
-      '7': [46, 51.5, 56, 60],
-      '8': [39, 43.9, 48, 52],
-      '9': [45, 49.7, 54, 58],
-      '10': [44, 48.7, 53, 57], // bad, a little bad, good, a little high, high
-      '11': [45, 49.4, 54, 58]
+      '0': [40, 45, 50, 55, 60, 65],
+      '1': [40, 45, 50, 55, 60, 65],
+      '2': [40, 45, 50, 55, 60, 65],
+      '3': [50, 55, 60, 65, 70, 75],
+      '4': [65, 70, 75, 80, 85, 90],
+      '5': [85, 90, 95, 100, 105, 110],
+      '6': [60, 65, 70, 75, 80, 85],
+      '7': [55, 60, 65, 70, 75, 80],
+      '8': [45, 50, 55, 60, 65, 70],
+      '9': [50, 55, 60, 65, 70, 75],
+      '10': [50, 55, 60, 65, 70, 75],
+      '11': [50, 55, 60, 65, 70, 75],
     },
     20: {     // Temperature
-      '0': [-3, -1,5, 1.5, 3],
-      '1': [-1, 0.6, 2, 3],
-      '2': [3, 5.7, 7, 8,5],
-      '3': [9, 11.1, 13, 15],
-      '4': [14, 16.3, 18, 20],
-      '5': [17, 19.6, 22, 24],
-      '6': [19, 21.5, 28, 35],
-      '7': [19, 20.9, 28, 35],
-      '8': [14.5, 16.8, 20, 25],
-      '9': [9.5, 11.2, 13, 16],
-      '10': [4.4, 5.7, 7, 9],
-      '11': [0, 1.2, 3, 5]
+      '0': [-5, -3, -1, 1.5, 3],
+      '1': [-3, -1, 1, 3, 5],
+      '2': [0, 3, 6, 10, 12],
+      '3': [5, 9, 12, 15, 18],
+      '4': [12, 15, 17, 20, 23],
+      '5': [15, 17, 20, 23, 26],
+      '6': [15, 19, 23, 26, 30],
+      '7': [15, 19, 22, 26, 30],
+      '8': [11, 14, 17, 20, 25],
+      '9': [6, 9, 12, 15, 18],
+      '10': [0, 3, 6, 9, 12],
+      '11': [-4, -1, 2, 5, 8],
     }
   }
 }
@@ -141,14 +141,12 @@ export default function appReducer( state = initialState, action ) {
       return {...state, selectedCounty: action.newCounty};
 
     case CHANGE_DISPLAY_YEAR:
-      console.log(action)
       return {...state, selectedYear: action.newYear, selectedMonth: action.newMonth};
 
     case PLAY_BUTTON_PRESSED:
       return {...state, playButtonPressed: true, interfaceDisabled: true};
 
     case STOP_BUTTON_PRESSED:
-      console.log(action)
       return {...state, playButtonPressed: false};
 
     case NEXT_TIMELINE_STEP:

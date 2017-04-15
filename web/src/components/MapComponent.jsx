@@ -13,21 +13,22 @@ import {store} from '../stores/store';
 const position = [46.130, 25.203];
 const mapAccessToken = 'pk.eyJ1IjoidGVvZG9yc3RlZnUiLCJhIjoiY2owbDY3dzBqMDJhajJxcWRkdGVoeDQ5ZiJ9.5mPrtadAUQKbMGQBBQ-3kA'
 
-const paramsColors = ['#00E400', '#FFFF00', '#FF7E00', '#FF0000', '#99004C'];
+const paramsColors = ['#00E400', '#FFFF00', '#FF7E00', '#FF0000', '#99004C', '#7E0023'];
 
 const AQI_INDEX = 1000
-const paramsForTempColors = [20]
 
+const paramsWithMontlyValues = [20, 24]
+const paramTemperature = 20
 
-const tempColors = ['#0A43BC', '#6590ED', '#F0F04C', '#FFA100', '#E31A1C'];
-
-const AQIColors = ['#00E400', '#FFFF00', '#FF7E00', '#FF0000', '#99004C'];
+const temperatureColors = ['#0A43BC', '#6590ED', '#00E400', '#FFA100', '#E31A1C'];
 
 const BLOCKED_COLOR = '#646161'
 
 const isInArray = (value, array) => {
     return array.indexOf(value) > -1;
 }
+
+const BreakException = {};
 
 @connect(state => state)
 export default class MapComponent extends Component {
@@ -42,7 +43,6 @@ export default class MapComponent extends Component {
 
     // check county has stations
     countyHasStations = (countyName) => {
-
         const {state} = this.props
         const countyIndex = state.counties.indexCodification[countyName];
         const stationsInCounty = state.airPollution.stationsInCounties[countyIndex];
@@ -57,13 +57,12 @@ export default class MapComponent extends Component {
         if (!this.countyHasStations(countyName)) {
             color = BLOCKED_COLOR;
         }
-        else if (state.selectedCounty != 'All Country' && countyName != state.selectedCounty) {
+        else if (state.selectedCounty != 'romania' && countyName != state.selectedCounty) {
             color = BLOCKED_COLOR;
         }
         else {
             const value = this.getValueForCounty(countyName);
             color = this.getColorForCounty(value)
-            // console.log(color)
         }
 
         return {
@@ -78,25 +77,29 @@ export default class MapComponent extends Component {
 
     getColorForCounty = (value) => {
 
-        const { selectedParameter, paramsLevels } = this.props.state;
+        const { selectedParameter, paramsLevels, selectedMonth } = this.props.state;
         if (selectedParameter.index == AQI_INDEX) {
-            return AQIColors[value];
+            return paramsColors[value];
         }
         if (value == 0) {
             return BLOCKED_COLOR;
         }
         else {
             let index = 0;
-            const colors = isInArray(selectedParameter.index, paramsForTempColors) ? tempColors : paramsColors;
+            const colors = selectedParameter.index == paramTemperature ? temperatureColors : paramsColors;
 
-            const paramsLevelsForCurrent = paramsLevels[selectedParameter.index]
-
-            for (let levelsIndex in paramsLevels) {
-                const levelValue = paramsLevelsForCurrent[levelsIndex]
-
-                if (levelValue != null && levelValue <= value) {
-                    index ++;
-                }
+            const currentParamsLevels =
+                isInArray(selectedParameter.index, paramsWithMontlyValues) ? paramsLevels[selectedParameter.index][String(selectedMonth)] : paramsLevels[selectedParameter.index]
+            try {
+                currentParamsLevels.forEach(function(paramLevelValue, levelIndex) {
+                    if (paramLevelValue != null && paramLevelValue >= value) {
+                        index = levelIndex;
+                        throw BreakException;
+                    }
+                })
+            }
+            catch (e) {
+                if (e !== BreakException) throw e;
             }
 
             return colors[index];
@@ -113,7 +116,6 @@ export default class MapComponent extends Component {
         const monthIndex = Number.parseInt(selectedMonth, 10);
         let values = [];
         if (countyIndex !== undefined && parameterIndex != undefined) {
-            // console.log(airPollution)
             return airPollution.data[countyIndex][yearIndex][monthIndex][parameterIndex];
         }
 

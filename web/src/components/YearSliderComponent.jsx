@@ -45,9 +45,8 @@ const formatterMarks = (function() {
 export default class OptionPanelComponent extends Component {
 
     onChangeValueHandler = (value) => {
-        console.log(value)
         const {dispatch} = store;
-        const month = '' + value % 12;
+        const month = value % 12;
         const year =  2010 + Math.floor(value / 12);
         dispatch(changeDisplayYear(year, month));
     }
@@ -87,7 +86,6 @@ export default class OptionPanelComponent extends Component {
 
     convertToMarkIndex = () => {
         const {selectedYear, selectedMonth} = this.props.state;
-        console.log(selectedYear, selectedMonth);
         return (selectedYear - 2010) * 12 + Number.parseInt(selectedMonth, 10);
     }
 

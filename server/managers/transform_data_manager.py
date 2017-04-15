@@ -5,6 +5,7 @@ _YEARS = [2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016]
 _MONTHS = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
 _MIN_PARAMETER_COUNT = 100
 
+_UNVIEWED_PARAMETERS = [23, 21, 18, 26]
 
 class Data_Transformer(object):
     def __init__(self, app_config):
@@ -87,6 +88,8 @@ class Data_Transformer(object):
     def save_used_parameters_and_stations(self, used_parameters, used_stations):
         for parameter in used_parameters:
             self.resources_manager.mark_parameter_used(parameter)
+            if parameter['index'] not in _UNVIEWED_PARAMETERS:
+                self.resources_manager.mark_parameter_viewed(parameter)
 
         for station in used_stations:
             print station
