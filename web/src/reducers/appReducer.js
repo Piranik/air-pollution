@@ -1,5 +1,5 @@
 import {REQUEST_ROMANIA_MAP_COORDS, RECEIVE_ROMANIA_MAP_COORDS, REQUEST_AIR_POLLUTION_STATISTICS, RECEIVE_AIR_POLLUTION_STATISTICS, REQUEST_COUNTIES, RECEIVE_COUNTIES, REQUEST_PARAMETERS, RECEIVE_PARAMETERS} from '../actions/apiActions.js'
-import {CHANGE_COUNTY_ACTION, CHANGE_PARAMETER_ACTION, CHANGE_DISPLAY_YEAR, PLAY_BUTTON_PRESSED, STOP_BUTTON_PRESSED, NEXT_TIMELINE_STEP} from '../actions/DisplayActions.js';
+import {CHANGE_COUNTY_ACTION, CHANGE_PARAMETER_ACTION, CHANGE_DISPLAY_YEAR, PLAY_BUTTON_PRESSED, STOP_BUTTON_PRESSED, NEXT_TIMELINE_STEP, STOP_TIMELINE} from '../actions/DisplayActions.js';
 
 import { combineReducers } from 'redux'
 
@@ -102,7 +102,7 @@ const sortNumbers = (a, b) => a - b;
 
 const mapFunctionForCounties = (element) => element['name']
 
-const mapFunctionForParams = (element) => Number.parseInt(element['index'],10)
+const mapFunctionForParams = (element) => Number.parseInt(element['index'], 10)
 
 export default function appReducer( state = initialState, action ) {
 
@@ -155,6 +155,10 @@ export default function appReducer( state = initialState, action ) {
         return {...state, interfaceDisabled: false};
       }
       return {...state, selectedMonth: action.nextMonth, selectedYear: action.nextYear};
+
+    case STOP_TIMELINE:
+      console.log(action);
+      return {...state, interfaceDisabled: false, playButtonPressed: false};
 
     default:
       return state;

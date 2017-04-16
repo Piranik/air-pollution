@@ -5,6 +5,7 @@ export const CHANGE_DISPLAY_YEAR = 'CHANGE_DISPLAY_YEAR';
 export const PLAY_BUTTON_PRESSED = 'PLAY_BUTTON_PRESSED';
 export const STOP_BUTTON_PRESSED = 'STOP_BUTTON_PRESSED';
 export const NEXT_TIMELINE_STEP = 'NEXT_TIMELINE_STEP';
+export const STOP_TIMELINE = 'STOP_TIMELINE';
 
 export function changeParameterAction(newParameter) {
     return {
@@ -49,5 +50,11 @@ export function nextStepInTimeline(nextYear, nextMonth) {
         type: NEXT_TIMELINE_STEP,
         nextYear: nextYear,
         nextMonth: nextMonth
+    }
+}
+
+export function stopTimeline() {
+    return {
+        type: STOP_TIMELINE
     }
 }

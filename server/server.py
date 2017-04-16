@@ -30,7 +30,7 @@ if __name__ == '__main__':
     def get_romania_map_data():
         response = {
             'coords': _read_romania_data_file(),
-            'center': [46.130, 25.203]
+            'center': [45.970, 25.203]
         }
 
         response = jsonify(response)

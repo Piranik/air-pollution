@@ -29,18 +29,20 @@ export default class OptionPanelComponent extends Component {
 
         return (
             <Col
-            xs="20%"
-            sm="20%"
-            md="20%"
-            lg="20%"
+            xs="18%"
+            sm="18%"
+            md="18%"
+            lg="18%"
             style={{
                 textAlign: 'center',
                 backgroundColor: '#BAD1D0',
-                height: '100%',
+                height: '50%',
                 border: "5px solid",
-                borderTopLeftRadius: "2em",
-                borderBottomLeftRadius: "2em"
-            }}>
+                borderRadius: "2em",
+                marginLeft: '2.5em',
+                marginRight: '1em',
+                marginTop: '6.5em'
+                }}>
                 <Row>
                     <Col style={{textAlign : 'center', margin: 'auto', marginTop: '2.5em', color: '#226764'}}>
                         Select County

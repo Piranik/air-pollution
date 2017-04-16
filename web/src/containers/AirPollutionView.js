@@ -44,11 +44,12 @@ export default class AirPollutionView extends Component {
             <div style={{overflowX: 'hidden'}}>
                 <TitleComponent titleText="Air Pollution Statistics" />
 
-                <Row style={{height: '82%', background: 'brown'}}>
-                    <MapComponent/>
+                <Row style={{height: '80%', marginTop: '0.8em', marginBottom: '0.8em'}}>
                     <OptionPanelComponent/>
+                    <MapComponent/>
                 </Row>
-                <Row>
+
+                <Row style={{borderTop: '0.2em solid'}}>
                     <YearSliderComponent/>
                 </Row>
             </div>

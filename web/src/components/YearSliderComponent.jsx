@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import { Button, Alert, Spinner, Row, Col } from 'elemental';
 import { Slider } from 'antd';
 
-import { changeDisplayYear, playButtonPressed, stopButtonPressed, nextStepInTimeline } from '../actions/DisplayActions.js';
+import { changeDisplayYear, playButtonPressed, stopButtonPressed, nextStepInTimeline, stopTimeline } from '../actions/DisplayActions.js';
 import { store } from '../stores/store.js'
 
 const MONTHS = ["January", "February", "March", "April", "May", "June",
@@ -64,11 +64,14 @@ export default class OptionPanelComponent extends Component {
         if (nextMonth == 0) {
             nextYear += 1;
         }
-
-        if (state.playButtonPressed == true) {
+        if (state.playButtonPressed == true && nextYear < 2017) {
             dispatch(nextStepInTimeline(nextYear, nextMonth));
             setTimeout(this.nextStepInTimeline, 1000);
         }
+        else {
+            dispatch(stopTimeline());
+        }
+
     }
 
     onPlayButtonHandler = () => {
@@ -114,7 +117,7 @@ export default class OptionPanelComponent extends Component {
                     marginTop: '1.0em'
                 }}
                 >
-                    <Slider max={83} marks={marks} tipFormatter={this.sliderFormatter} value={this.convertToMarkIndex()} onChange={this.onChangeValueHandler}/>
+                    <Slider max={83} marks={marks} tipFormatter={this.sliderFormatter} value={this.convertToMarkIndex()} onChange={this.onChangeValueHandler} disabled={this.props.state.interfaceDisabled}/>
                 </Col>
             </Row>
         );

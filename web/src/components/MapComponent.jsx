@@ -136,12 +136,16 @@ export default class MapComponent extends Component {
         else {
             return (
                 <Col
-                    xs="80%"
-                    sm="80%"
-                    md="80%"
-                    lg="80%"
+                    xs="77%"
+                    sm="77%"
+                    md="77%"
+                    lg="77%"
                     >
-                    <Map style={{height: '100%', width: '100%'}} center={state.mapCoords.centerPosition} zoom={6}  zoomControl={false} doubleClickZoom={false} >
+                    <Map style={{height: '100%',
+                            width: '100%',
+                            border: "5px solid"
+                            }}
+                            center={state.mapCoords.centerPosition} zoom={7}  zoomControl={false} doubleClickZoom={false} >
                         <TileLayer
                           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                           url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
