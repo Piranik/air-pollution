@@ -10,6 +10,7 @@ export const RECEIVE_COUNTIES = 'RECEIVE_COUNTIES'
 export const REQUEST_PARAMETERS= 'REQUEST_PARAMETERS'
 export const RECEIVE_PARAMETERS = 'RECEIVE_PARAMETERS'
 
+const API_URL = 'http://opendata.cs.pub.ro/air/api/'
 
 function requestParameters() {
   return {
@@ -70,7 +71,7 @@ function receiveRomaniaMapCoords(response) {
 export function fetchParameters() {
   return function(dispatch) {
     dispatch(requestParameters());
-    return fetch('http://localhost:8000/api/viewed_parameters')
+    return fetch(API_URL + 'viewed_parameters')
       .then(response => response.json())
         .then(json => {
           console.log('Got parameters');
@@ -82,7 +83,7 @@ export function fetchParameters() {
 export function fetchCounties() {
   return function(dispatch) {
     dispatch(requestCounties());
-    return fetch('http://localhost:8000/api/counties')
+    return fetch(API_URL + 'counties')
       .then(response => response.json())
         .then(json => {
           console.log('Got counties');
@@ -94,7 +95,7 @@ export function fetchCounties() {
 export function fetchMapCoords() {
   return function(dispatch) {
     dispatch(requestRomaniaMapCoords());
-    return fetch('http://localhost:8000/api/ro_map_data')
+    return fetch(API_URL + 'ro_map_data')
       .then(response => response.json())
         .then(json => {
           console.log('Got coords', json.coords.length);
@@ -106,7 +107,7 @@ export function fetchMapCoords() {
 export function fetchAirPollutionStatistics() {
   return function(dispatch) {
     dispatch(requestAirPollutionStatistics());
-    return fetch('http://localhost:8000/api/statistics/air_pollution_county')
+    return fetch(API_URL + 'statistics/air_pollution_county')
       .then(response => response.json())
         .then(json => {
           console.log('Got Air Statistics')

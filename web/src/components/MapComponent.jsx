@@ -1,45 +1,20 @@
-import { render } from 'react-dom'
-import { Router, Route, Link } from 'react-router'
-import { connect } from 'react-redux'
-import React, { Component } from 'react'
-
-import { Button, Alert, Spinner, Row, Col } from 'elemental'
+import { Router, Route, Link } from 'react-router';
+import { connect } from 'react-redux';
+import React, { Component } from 'react';
+import { Button, Alert, Spinner, Row, Col } from 'elemental';
 import { Map, Marker, Popup, TileLayer, GeoJSON } from 'react-leaflet';
+import Control from 'react-leaflet-control';
 
+
+import InfoPanelControl from './InfoPanelControl.jsx';
+import AirPollutionMapLegend from './AirPollutionMapLegend.jsx';
+import {hoverCounty} from '../actions/DisplayActions.js';
 import {store} from '../stores/store';
+import {getCountyNameFromFeature, BreakException, isInArray, paramsColors, AQI_INDEX, paramsWithMontlyValues, paramTemperature, temperatureColors, BLOCKED_COLOR} from '../utils.jsx';
 
-
-// 46.130/25.203
-const position = [46.130, 25.203];
-const mapAccessToken = 'pk.eyJ1IjoidGVvZG9yc3RlZnUiLCJhIjoiY2owbDY3dzBqMDJhajJxcWRkdGVoeDQ5ZiJ9.5mPrtadAUQKbMGQBBQ-3kA'
-
-const paramsColors = ['#00E400', '#FFFF00', '#FF7E00', '#FF0000', '#99004C', '#7E0023'];
-
-const AQI_INDEX = 1000
-
-const paramsWithMontlyValues = [20, 24]
-const paramTemperature = 20
-
-const temperatureColors = ['#0A43BC', '#6590ED', '#00E400', '#FFA100', '#E31A1C'];
-
-const BLOCKED_COLOR = '#646161'
-
-const isInArray = (value, array) => {
-    return array.indexOf(value) > -1;
-}
-
-const BreakException = {};
 
 @connect(state => state)
 export default class MapComponent extends Component {
-    // static propTypes = {
-    //     dispatch: React.PropTypes.func,
-    //     map_data: React.PropTypes.object
-    // }
-
-    getColor = () => {
-        return '#4F7E00';
-    }
 
     // check county has stations
     countyHasStations = (countyName) => {
@@ -51,7 +26,7 @@ export default class MapComponent extends Component {
 
     countyStyle = (county) => {
         const {state} = this.props
-        const countyName = county.properties.name.trim().toLowerCase().replace(/ /g, '-');
+        const countyName = getCountyNameFromFeature(county);
         let color = "";
 
         if (!this.countyHasStations(countyName)) {
@@ -114,48 +89,69 @@ export default class MapComponent extends Component {
         const parameterIndex = paramsIndexCodification[selectedParameter.index];
         const yearIndex = selectedYear - 2010;
         const monthIndex = Number.parseInt(selectedMonth, 10);
-        let values = [];
+        let value = undefined;
+
         if (countyIndex !== undefined && parameterIndex != undefined) {
-            return airPollution.data[countyIndex][yearIndex][monthIndex][parameterIndex];
+            value = airPollution.data[countyIndex][yearIndex][monthIndex][parameterIndex];
         }
 
-        return undefined;
+        return value;
+    }
+
+    // Map functions, probably I will send them as props
+    highlightFeature = (e) => {
+        const layer = e.target;
+        store.dispatch(hoverCounty(getCountyNameFromFeature(e.target.feature)));
+
+        layer.setStyle({
+            weight: 3,
+            color: '#666',
+            dashArray: '',
+            fillOpacity: 0.7
+        });
+
+        if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+            layer.bringToFront();
+        }
+    }
+
+    resetHighlight = (e) => {
+        this.refs.geojson.leafletElement.resetStyle(e.target);
+        store.dispatch(hoverCounty(null));
+    }
+
+    onEachFeature = (feature, layer) => {
+        layer.on({
+            mouseover: this.highlightFeature,
+            mouseout: this.resetHighlight
+        });
     }
 
     render() {
-        const {state} = this.props
-        if (state.mapCoords.data.length == 0 ||
-            state.airPollution.data.length == 0 ||
-            state.counties.data.length == 0 ||
-            state.usedParameters.data.length == 0
-            ) {
-            return (
-                <Spinner size="lg" />
-            );
-        }
-        else {
-            return (
-                <Col
-                    xs="77%"
-                    sm="77%"
-                    md="77%"
-                    lg="77%"
-                    >
-                    <Map style={{height: '100%',
-                            width: '100%',
-                            border: "5px solid"
-                            }}
-                            center={state.mapCoords.centerPosition} zoom={7}  zoomControl={false} doubleClickZoom={false} >
-                        <TileLayer
-                          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                          url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
-                        />
-                        <GeoJSON data={state.mapCoords.data} style={this.countyStyle}/>
-                    </Map>
-                </Col>
-            );
-        }
-
+        const {state} = this.props;
+        this.state = undefined
+        return (
+            <Col
+                xs="77%"
+                sm="77%"
+                md="77%"
+                lg="77%"
+                >
+                <Map id='disease_map' style={{height: '100%',
+                        width: '100%',
+                        border: "5px solid"
+                        }}
+                        center={state.mapCoords.centerPosition} zoom={7}  zoomControl={false} doubleClickZoom={false} >
+                    <TileLayer
+                      attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                      url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
+                    />
+                    <GeoJSON ref="geojson" data={state.mapCoords.data} style={this.countyStyle} onEachFeature={this.onEachFeature}/>
+                    <InfoPanelControl getValue={this.getValueForCounty} />
+                    <AirPollutionMapLegend />
+                </Map>
+            </Col>
+        );
     }
 
 }

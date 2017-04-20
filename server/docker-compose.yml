@@ -1,0 +1,41 @@
+configurer:
+    build: .
+    volumes:
+        - ./:/opt/air-pollution
+    command: sleep 10000000000000
+    # command: /bin/bash /tmp/run_configurer_script.sh
+    links:
+        - db:db
+    container_name: configurer-container
+
+db:
+    image: tutum/mongodb
+    ports:
+        - 37017:27017
+    volumes:
+        - /Users/Teodor/data/db:/data/db
+    environment:
+        - AUTH=no
+
+api_server:
+    build: .
+    volumes:
+        - ./:/opt/air-pollution
+    command: /bin/bash /tmp/run_server_script.sh
+    # command: sleep 10000000000000000
+    links:
+        - db:db
+    container_name: server-container
+    ports:
+        - 8000:8000
+
+web:
+  image: nginx
+  volumes:
+   - ../web/build:/var/www/myexample.com
+   - ../web/nginx.conf:/etc/nginx/nginx.conf
+  ports:
+   - "8080:80"
+  command: nginx -g 'daemon off;'
+  links:
+    - api_server

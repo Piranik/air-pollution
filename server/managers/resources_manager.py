@@ -26,8 +26,9 @@ class Resources_Manager(object):
 
         if not app_config:
             app_config = ConfigYaml().get_config()
-
-        database_controller = Database_Controller()
+        print app_config
+        database_controller = Database_Controller(app_config['database']['hostname'],
+            app_config['database']['port'])
         self.stations_collection = database_controller.get_collection('air_stations')
         self.parameters_collection = database_controller.get_collection('parameters')
         self.diseases_collection = database_controller.get_collection('diseases')

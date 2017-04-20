@@ -1,5 +1,5 @@
 import {REQUEST_ROMANIA_MAP_COORDS, RECEIVE_ROMANIA_MAP_COORDS, REQUEST_AIR_POLLUTION_STATISTICS, RECEIVE_AIR_POLLUTION_STATISTICS, REQUEST_COUNTIES, RECEIVE_COUNTIES, REQUEST_PARAMETERS, RECEIVE_PARAMETERS} from '../actions/apiActions.js'
-import {CHANGE_COUNTY_ACTION, CHANGE_PARAMETER_ACTION, CHANGE_DISPLAY_YEAR, PLAY_BUTTON_PRESSED, STOP_BUTTON_PRESSED, NEXT_TIMELINE_STEP, STOP_TIMELINE} from '../actions/DisplayActions.js';
+import {CHANGE_COUNTY_ACTION, CHANGE_PARAMETER_ACTION, CHANGE_DISPLAY_YEAR, PLAY_BUTTON_PRESSED, STOP_BUTTON_PRESSED, NEXT_TIMELINE_STEP, STOP_TIMELINE, HOVER_COUNTY} from '../actions/DisplayActions.js';
 
 import { combineReducers } from 'redux'
 
@@ -31,15 +31,14 @@ const initialState = {
   },
   selectedYear: 2012,
   selectedMonth: 0,
-  currentMonthStatistics: [],
   selectedParameter: {
     name: 'Air Quality Index',
     formula: 'AQI',
     index: 1000
   },
-  playMode: false, // this enables play mode
   interfaceDisabled: false, // this will unlock the interface
   selectedCounty: 'romania',
+  hoveredCounty: null,
   paramsLevels: {
     3: [53, 100, 360, 649, 1249, 2049], // Oxizi de Azot
     10: [50, 100, 200, 300, 350, 400], // Monoxid de Azot
@@ -78,7 +77,20 @@ const initialState = {
       '10': [0, 3, 6, 9, 12],
       '11': [-4, -1, 2, 5, 8],
     }
-  }
+  },
+  measurementUnits: {
+      1: 'μg/m',
+      3: 'μg/m',
+      4: 'μg/m',
+      5: 'μg/m',
+      9: 'μg/m',
+      10: 'μg/m',
+      19: 'km/h',
+      20: 'C',
+      22: 'mb (milibari)',
+      24: 'mm',
+      1000: ''
+    }
 }
 
 const compareByName = (a, b) => {
@@ -150,15 +162,16 @@ export default function appReducer( state = initialState, action ) {
       return {...state, playButtonPressed: false};
 
     case NEXT_TIMELINE_STEP:
-      console.log(action)
       if (state.playButtonPressed == false) {
         return {...state, interfaceDisabled: false};
       }
       return {...state, selectedMonth: action.nextMonth, selectedYear: action.nextYear};
 
     case STOP_TIMELINE:
-      console.log(action);
       return {...state, interfaceDisabled: false, playButtonPressed: false};
+
+    case HOVER_COUNTY:
+      return {...state, hoveredCounty: action.county}
 
     default:
       return state;

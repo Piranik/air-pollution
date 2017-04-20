@@ -1,11 +1,12 @@
-export const CHANGE_PARAMETER_ACTION = 'CHANGE_PARAMETER_ACTION';
-export const CHANGE_COUNTY_ACTION = 'CHANGE_COUNTY_ACTION';
-export const CHANGE_DISPLAY_YEAR = 'CHANGE_DISPLAY_YEAR';
+export const CHANGE_PARAMETER_ACTION        = 'CHANGE_PARAMETER_ACTION';
+export const CHANGE_COUNTY_ACTION           = 'CHANGE_COUNTY_ACTION';
+export const CHANGE_DISPLAY_YEAR            = 'CHANGE_DISPLAY_YEAR';
 
-export const PLAY_BUTTON_PRESSED = 'PLAY_BUTTON_PRESSED';
-export const STOP_BUTTON_PRESSED = 'STOP_BUTTON_PRESSED';
-export const NEXT_TIMELINE_STEP = 'NEXT_TIMELINE_STEP';
-export const STOP_TIMELINE = 'STOP_TIMELINE';
+export const PLAY_BUTTON_PRESSED            = 'PLAY_BUTTON_PRESSED';
+export const STOP_BUTTON_PRESSED            = 'STOP_BUTTON_PRESSED';
+export const NEXT_TIMELINE_STEP             = 'NEXT_TIMELINE_STEP';
+export const STOP_TIMELINE                  = 'STOP_TIMELINE';
+export const HOVER_COUNTY                   = 'HOVER_COUNTY';
 
 export function changeParameterAction(newParameter) {
     return {
@@ -56,5 +57,12 @@ export function nextStepInTimeline(nextYear, nextMonth) {
 export function stopTimeline() {
     return {
         type: STOP_TIMELINE
+    }
+}
+
+export function hoverCounty(county) {
+    return {
+        type: HOVER_COUNTY,
+        county: county
     }
 }

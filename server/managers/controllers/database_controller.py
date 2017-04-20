@@ -35,6 +35,9 @@ DEFAULT_USED_STATIONS_COLLECTION_INDEXES = [
 class Database_Controller(object):
 
     def __init__(self, url = 'mongodb://localhost/', port=27017, database='Air-Pollution'):
+        print url
+        print port
+        print url + str(port)
         self.db_connection = MongoClient(url + str(port))
         self.database = self.db_connection[database]
         self.create_initial_collections()

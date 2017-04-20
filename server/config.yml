@@ -8,3 +8,6 @@ counties_stations_distribution: configuration_files/informatii-privind-repartiza
 stations_measurements_folder: datasets_all/
 diseases_folder: diseases_all/
 
+database:
+  hostname: 'mongodb://db/'
+  port: 37017
