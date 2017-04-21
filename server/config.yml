@@ -3,10 +3,10 @@ ckan:
   last_modified: 2010-10-04 01:37:47.119899
   url: http://data.gov.ro/
 
-stations: configuration_files/informatii-privind-statiile-rnmca.xls
-counties_stations_distribution: configuration_files/informatii-privind-repartizarea-statiilor-rnmca-pe-zone-si-aglomerari.xls
-stations_measurements_folder: datasets_all/
-diseases_folder: diseases_all/
+stations: ../configuration_files/informatii-privind-statiile-rnmca.xls
+counties_stations_distribution: ../configuration_files/informatii-privind-repartizarea-statiilor-rnmca-pe-zone-si-aglomerari.xls
+stations_measurements_folder: ../datasets_all/
+diseases_folder: ../diseases_all/
 
 database:
   hostname: 'mongodb://db/'
