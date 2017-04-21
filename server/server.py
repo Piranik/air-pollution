@@ -26,7 +26,7 @@ if __name__ == '__main__':
     statistics_manager = Statistics_Manager()
     resources_manager = Resources_Manager()
 
-    @app.route('/air/api/ro_map_data')
+    @app.route('/api/ro_map_data')
     def get_romania_map_data():
         response = {
             'coords': _read_romania_data_file(),
@@ -38,7 +38,7 @@ if __name__ == '__main__':
 
         return response
 
-    @app.route('/air/api/counties')
+    @app.route('/api/counties')
     def get_counties():
         counties = resources_manager.get_counties()
         response = {
@@ -50,7 +50,7 @@ if __name__ == '__main__':
 
         return response
 
-    @app.route('/air/api/statistics/air_pollution_county')
+    @app.route('/api/statistics/air_pollution_county')
     def get_statistics_for_used_stations():
         # used_stations_statistics_matrix = resources_manager.get_used_stations_stations()
         county_stations_no, statistics = statistics_manager.air_pollution_county_statistics()
@@ -65,7 +65,7 @@ if __name__ == '__main__':
         return response
 
 
-    @app.route('/air/api/viewed_parameters')
+    @app.route('/api/viewed_parameters')
     def get_parameters():
         viewed_paramters = resources_manager.get_viewed_parameters()
         viewed_paramters.append({
