@@ -17,7 +17,7 @@ export default class MainView extends Component {
                     <Col xs="75%" sm="75%" md="75%" lg="75%">
                     </Col>
                     <Col xs="25%" sm="25%" md="25%" lg="25%">
-                        <Link style={{ textDecoration: 'none', color: 'white', textSize: '2.5em' }} to="/disease-evolution">
+                        <Link style={{ textDecoration: 'none', color: 'white', textSize: '2.5em' }} to="/air/disease-evolution">
                             <Button type="hollow-primary" size="lg" style={{width: '15em', height: '5em'}}>
                                     Disease Evolution
                             </Button>
@@ -28,7 +28,7 @@ export default class MainView extends Component {
                     <Col xs="75%" sm="75%" md="75%" lg="75%">
                     </Col>
                     <Col xs="25%" sm="25%" md="25%" lg="25%">
-                        <Link style={{ textDecoration: 'none' }} to="/air-pollution">
+                        <Link style={{ textDecoration: 'none' }} to="/air/air-pollution">
                             <Button type="hollow-primary" size="lg" style={{width: '15em', height: '5em'}}>
                                 Air Pollution
                             </Button>
