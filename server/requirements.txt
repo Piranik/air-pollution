@@ -4,6 +4,7 @@ ckanapi
 configparser
 Flask
 Flask-Cors
+Flask-Cache
 requests
 pyyaml
 python-dateutil

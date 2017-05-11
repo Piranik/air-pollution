@@ -6,6 +6,8 @@ import re
 import os
 from flask_cors import CORS, cross_origin
 import json
+from flask_cache import Cache
+
 
 from managers.resources_manager import Resources_Manager
 from managers.statistics_manager import Statistics_Manager
@@ -22,11 +24,13 @@ def _read_romania_data_file():
 if __name__ == '__main__':
     app = Flask(__name__)
     CORS(app)
+    cache = Cache(app,config={'CACHE_TYPE': 'simple'})
 
     statistics_manager = Statistics_Manager()
     resources_manager = Resources_Manager()
 
     @app.route('/api/ro_map_data')
+    @cache.cached(timeout=2592000)
     def get_romania_map_data():
         response = {
             'coords': _read_romania_data_file(),
@@ -39,6 +43,7 @@ if __name__ == '__main__':
         return response
 
     @app.route('/api/counties')
+    @cache.cached(timeout=2592000)
     def get_counties():
         counties = resources_manager.get_counties()
         response = {
@@ -51,6 +56,7 @@ if __name__ == '__main__':
         return response
 
     @app.route('/api/statistics/air_pollution_county')
+    @cache.cached(timeout=2592000)
     def get_statistics_for_used_stations():
         # used_stations_statistics_matrix = resources_manager.get_used_stations_stations()
         county_stations_no, statistics = statistics_manager.air_pollution_county_statistics()
@@ -66,6 +72,7 @@ if __name__ == '__main__':
 
 
     @app.route('/api/viewed_parameters')
+    @cache.cached(timeout=2592000)
     def get_parameters():
         viewed_paramters = resources_manager.get_viewed_parameters()
         viewed_paramters.append({

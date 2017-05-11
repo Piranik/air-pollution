@@ -43,7 +43,7 @@ def import_stations_measurements(resources_manager, app_config):
     datasets_files = [join(app_config['stations_measurements_folder'], f) for f in listdir(
         app_config['stations_measurements_folder']) if isfile(join(
             app_config['stations_measurements_folder'], f)) and '.xml' in f]
-    print datasets_files
+    # print datasets_files
     for dataset_file in datasets_files:
         try:
             print 'Parsing: %s' % dataset_file
@@ -86,8 +86,8 @@ def import_data(app_config):
     # ensure db connection
     resources_manager = Resources_Manager(app_config)
 
-    import_stations(resources_manager, app_config)
-    import_stations_measurements(resources_manager, app_config)
+    # import_stations(resources_manager, app_config)
+    # import_stations_measurements(resources_manager, app_config)
     import_diseases(resources_manager, app_config)
 
 
