@@ -10,13 +10,12 @@ import { Provider } from 'react-redux'
 import { fetchNewspapers, fetchCategories, fetchRomaniaMapCoords } from './actions/apiActions.js'
 import jQuery from 'jquery'
 
-import App from './containers/App'
 import WelcomeView from './containers/WelcomeView'
 import AirPollutionView from './containers/AirPollutionView'
 import DiseaseEvolutionView from './containers/DiseaseEvolutionView'
+import DiseasePredictionView from './containers/DiseasePredictionView'
 
 
-// injectTapEventPlugin();
 const history = syncHistoryWithStore(browserHistory, store)
 
 ReactDOM.render(
@@ -26,6 +25,7 @@ ReactDOM.render(
       <Route path="/air" component={WelcomeView}/>
       <Route path="/air/air-pollution" component={AirPollutionView} />
       <Route path="/air/disease-evolution" component={DiseaseEvolutionView}/>
+      <Route path="/air/disease-prediction" component={DiseasePredictionView}/>
     </Router>
   </Provider>,
   document.getElementById('app')

@@ -5,7 +5,7 @@ START_ROW = 14
 OBJECT_PARAMETERS_CASE1 = {
     'code': 3, 'name': 5, 'type': 6, 'vr': 8,
     'total_number_cases': 9, 'percentage_of_cases': 10,
-    'acute_casses': 12, 'chronic_cases': 14,
+    'acute_cases': 12, 'chronic_cases': 14,
     'spitalization_total': 16, 'spitalization_acute': 18,
     'spitalization_chronic': 20, 'dms_acute': 22,
     'dms_chronic': 23}
@@ -13,7 +13,7 @@ OBJECT_PARAMETERS_CASE1 = {
 OBJECT_PARAMETERS_CASE2 = {
     'code': 3, 'name': 5, 'type': 7, 'vr': 9,
     'total_number_cases': 10, 'percentage_of_cases': 11,
-    'acute_casses': 13, 'chronic_cases': 15,
+    'acute_cases': 13, 'chronic_cases': 15,
     'spitalization_total': 17, 'spitalization_acute': 21,
     'spitalization_chronic': 23, 'dms_acute': 25,
     'dms_chronic': 26}
@@ -46,8 +46,8 @@ class Disease_parser(object):
             return match.group(1).lower(), match.group(2), match.group(3)
         return None, None, None
 
-    def read_value(self, xls_parser, x, y):
-        value = xls_parser.get_value(x, y)
+    def read_value(self, xls_parser, x_pos, y_pos):
+        value = xls_parser.get_value(x_pos, y_pos)
         if value != None:
             if type(value).__name__ == 'unicode':
                 value = value.replace(u'\xe2', 'a')
@@ -57,7 +57,8 @@ class Disease_parser(object):
 
     def read_row(self, xls_parser, row_number):
         disease_object = {}
-        row_with_data_flag = self.read_value(xls_parser, row_number, OBJECT_PARAMETERS_CASE1['code'])
+        row_with_data_flag = self.read_value(xls_parser, row_number,
+                                             OBJECT_PARAMETERS_CASE1['code'])
         if row_with_data_flag:
             if self.read_value(xls_parser, row_number, DIFFERENCE_COL):
                 obj_params = OBJECT_PARAMETERS_CASE1

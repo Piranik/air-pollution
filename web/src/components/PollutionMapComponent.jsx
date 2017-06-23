@@ -10,11 +10,12 @@ import InfoPanelControl from './InfoPanelControl.jsx';
 import AirPollutionMapLegend from './AirPollutionMapLegend.jsx';
 import {hoverCounty} from '../actions/DisplayActions.js';
 import {store} from '../stores/store';
-import {getCountyNameFromFeature, BreakException, isInArray, paramsColors, AQI_INDEX, paramsWithMontlyValues, paramTemperature, temperatureColors, BLOCKED_COLOR} from '../utils.jsx';
+import {getCountyNameFromFeature, BreakException, isInArray, paramsColors, temperatureColors, rainfallColors, windAndPressureColors, BLOCKED_COLOR, AQI_INDEX, paramsIndexesWithMontlyValues,
+    temperatureIndex, rainfallIndex, windOrPressureIndexes, getColorsSetBySelectedIndex } from '../utils.jsx';
 
 
 @connect(state => state)
-export default class MapComponent extends Component {
+export default class PollutionMapComponent extends Component {
 
     // check county has stations
     countyHasStations = (countyName) => {
@@ -53,25 +54,28 @@ export default class MapComponent extends Component {
     getColorForCounty = (value) => {
 
         const { selectedParameter, paramsLevels, selectedMonth } = this.props.state;
-        if (selectedParameter.index == AQI_INDEX) {
-            return paramsColors[value];
-        }
         if (value == 0) {
             return BLOCKED_COLOR;
         }
+        else if (selectedParameter.index == AQI_INDEX) {
+            return paramsColors[value-1];
+        }
         else {
-            let index = 0;
-            const colors = selectedParameter.index == paramTemperature ? temperatureColors : paramsColors;
+            let index = -1;
+            const colors = getColorsSetBySelectedIndex(selectedParameter.index);
 
             const currentParamsLevels =
-                isInArray(selectedParameter.index, paramsWithMontlyValues) ? paramsLevels[selectedParameter.index][String(selectedMonth)] : paramsLevels[selectedParameter.index]
+                isInArray(selectedParameter.index, paramsIndexesWithMontlyValues) ? paramsLevels[selectedParameter.index][String(selectedMonth)] : paramsLevels[selectedParameter.index]
             try {
                 currentParamsLevels.forEach(function(paramLevelValue, levelIndex) {
-                    if (paramLevelValue != null && paramLevelValue >= value) {
+                    if (value < paramLevelValue ) {
                         index = levelIndex;
                         throw BreakException;
                     }
                 })
+                if (index == -1) {
+                    index = currentParamsLevels.length
+                }
             }
             catch (e) {
                 if (e !== BreakException) throw e;
@@ -137,7 +141,7 @@ export default class MapComponent extends Component {
                 md="77%"
                 lg="77%"
                 >
-                <Map id='disease_map' style={{height: '100%',
+                <Map id='pollution_map' style={{height: '100%',
                         width: '100%',
                         border: "5px solid"
                         }}
@@ -147,7 +151,7 @@ export default class MapComponent extends Component {
                       url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
                     />
                     <GeoJSON ref="geojson" data={state.mapCoords.data} style={this.countyStyle} onEachFeature={this.onEachFeature}/>
-                    <InfoPanelControl getValue={this.getValueForCounty} />
+                    <InfoPanelControl getValue={this.getValueForCounty} header={state.selectedParameter.name + ' Value'} mode={'pollution'}/>
                     <AirPollutionMapLegend />
                 </Map>
             </Col>

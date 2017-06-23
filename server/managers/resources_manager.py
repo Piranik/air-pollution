@@ -35,6 +35,7 @@ class Resources_Manager(object):
         self.counties_collection = database_controller.get_collection('counties')
         self.stations_statistics_collection = database_controller.get_collection(
             'air_stations_statistics')
+        self.diseases_used_collection = database_controller.get_collection('diseases_used')
         self.database_controller = database_controller
 
     # County Methos
@@ -48,10 +49,38 @@ class Resources_Manager(object):
         return [_convert_objectId(x) for x in counties]
 
     # Disease Methods
-    def update_insert_disease(self, new_disease, county, start_date, end_date):
+    def update_insert_disease(self, new_disease):
         disease_query = self.disease_query_object(new_disease)
-        disease_update = self.disease_update_object(new_disease, county, start_date, end_date)
+        disease_update = self.disease_update_object(new_disease)
         self.diseases_collection.update(disease_query, disease_update, True)
+
+    def update_disease_metadata(self, new_disease):
+        _set_objectId(new_disease)
+        del new_disease['statistics']
+        disease_query = {'_id': new_disease['_id']}
+        disease_update = {'$set': new_disease}
+        self.diseases_collection.update(disease_query, disease_update)
+
+    def get_all_diseases(self):
+        diseases = self.database_controller.find_in_collection(self.diseases_collection.name, {})
+        return [_convert_objectId(x) for x in diseases]
+
+    def get_disease_by_code(self, disease_code):
+        query = {'code': disease_code}
+        disease = self.database_controller.find_one_in_collection(self.diseases_collection.name,
+                                                                  query)
+        return _convert_objectId(disease)
+
+    def insert_update_disease_statistics(self, disease_statistics):
+        query_obj = {'name': disease_statistics['name'],
+                     'category': disease_statistics['category']}
+        self.database_controller.update_object_in_collection(
+            self.diseases_used_collection.name, {'$set': disease_statistics}, query_obj, True)
+
+    def get_used_diseases(self):
+        used_diseases = self.database_controller.find_in_collection(
+            self.diseases_used_collection.name, {})
+        return [_convert_objectId(x) for x in used_diseases]
 
     # Statistics air stations
     def get_stations_statistics(self):
@@ -141,7 +170,8 @@ class Resources_Manager(object):
         self.update_insert_parameter(parameter)
 
     def get_parameter(self, parameter_index):
-        return list(self.database_controller.find_in_collection(self.parameters_collection.name, {'index': str(parameter_index)}))[0]
+        return list(self.database_controller.find_in_collection(
+            self.parameters_collection.name, {'index': str(parameter_index)}))[0]
 
     def get_used_parameters(self):
         used_parameters = self.database_controller.find_in_collection(
@@ -151,7 +181,8 @@ class Resources_Manager(object):
     def get_viewed_parameters(self):
         used_parameters = self.database_controller.find_in_collection(
             self.parameters_collection.name, {'view': True})
-        return list(_convert_objectId(x) for x in used_parameters)
+        used_parameters = [_convert_objectId(x) for x in used_parameters]
+        return used_parameters
 
     def get_all_parameters(self):
         parameters = self.database_controller.find_in_collection(self.parameters_collection.name,
@@ -165,7 +196,7 @@ class Resources_Manager(object):
 
     # Measurement methods
     # Add/Update Methods
-    def insert_measurement(self, station_code, parameter_info, parameter_measurements, date, filename):
+    def insert_measurement(self, station_code, parameter_info, parameter_measurements, date,                   filename):
         query_object = self.create_station_query_object(date, parameter_info)
         station_new_measurements_object = self.create_station_object(
             filename, date, parameter_info, parameter_measurements)
@@ -181,7 +212,7 @@ class Resources_Manager(object):
                                     parameter_info, parameter_measurements, date, file_name)
 
     def get_measurements_for_station(self, station_name, year=None, month=None,
-        parameter_index=None):
+                                     parameter_index=None):
         if self.database_controller.collection_exists(station_name):
             query_object = self.create_query_object_for_find(year, month, parameter_index)
             measurements = self.database_controller.find_in_collection(station_name, query_object)
@@ -224,32 +255,8 @@ class Resources_Manager(object):
             'type': new_disease['type']
             }
 
-    def disease_update_object(self, new_disease, county, start_date, end_date):
-        new_disease = self.convert_disease_object(new_disease, county, start_date, end_date)
-        new_statistics = list(new_disease.pop('statistics'))
-        return {'$set' : new_disease,
-                '$push': {'statistics': {'$each': new_statistics}}}
-
-    def convert_disease_object(self, new_disease, county, start_date, end_date):
-        statistic_object = {'start_date': start_date,
-                            'end_date': end_date,
-                            'county': county,
-                            'vr': new_disease['vr'],
-                            'total_number_cases': new_disease['total_number_cases'],
-                            'percentage_of_cases': new_disease['percentage_of_cases'],
-                            'acute_casses': new_disease['acute_casses'],
-                            'chronic_cases': new_disease['chronic_cases'],
-                            'spitalization_total': new_disease['spitalization_total'],
-                            'spitalization_acute': new_disease['spitalization_acute'],
-                            'spitalization_chronic': new_disease['spitalization_chronic'],
-                            'dms_acute': new_disease['dms_acute'],
-                            'dms_chronic': new_disease['dms_chronic']
-                           }
-        converted_disease_object = {'name': new_disease['name'],
-                                    'type': new_disease['type'],
-                                    'code': new_disease['code'],
-                                    'statistics': [statistic_object]}
-        return converted_disease_object
+    def disease_update_object(self, new_disease):
+        return {'$set' : new_disease}
 
 
     def county_query_object(self, county_name):

@@ -2,26 +2,27 @@ import React, { Component } from 'react';
 import Control from 'react-leaflet-control';
 import { connect } from 'react-redux';
 
-import {paramTemperature, paramsColors, temperatureColors, isInArray, paramsWithMontlyValues, AQI_INDEX, displayMeasurementUnit, OZONE_INDEX} from '../utils.jsx';
+import {paramTemperature, paramsColors, temperatureColors, isInArray, paramsIndexesWithMontlyValues, AQI_INDEX, displayMeasurementUnit, OZONE_INDEX, getColorsSetBySelectedIndex} from '../utils.jsx';
 
 @connect(state => state)
 export default class InfoPanelControl extends Component {
 
-    generateLegendEntry = (firstValue, secondValue, colorIndex, parameterIndex, measurementUnits)=> {
-        let colors = parameterIndex == paramTemperature ? temperatureColors : paramsColors;
-
-        if (parameterIndex == OZONE_INDEX) {
-            colors = colors.slice()
-            colors.splice(1, 1);
-        }
-
-        return (<div key={colorIndex}><i style={{background: colors[colorIndex], width: '18px', height: '18px', float: 'left', marginRight: '8px', opacity: 0.7}}></i> {firstValue} &ndash; {secondValue} {displayMeasurementUnit(parameterIndex, measurementUnits)}<br/></div>);
+    generateLegendEntry = (firstValue, secondValue, colorIndex, color, measurementUnit)=> {
+        return (<div key={colorIndex}><i style={{background: color, width: '18px', height: '18px', float: 'left', marginRight: '8px', opacity: 0.7}}></i> {firstValue} &ndash; {secondValue} {measurementUnit}<br/></div>);
     }
 
-    generateLegendEntryForAQI = (value) => {
+    generateFirstLegendEntry = (secondValue, colorIndex, color, measurementUnit) => {
+        return (<div key={colorIndex}><i style={{background: color, width: '18px', height: '18px', float: 'left', marginRight: '8px', opacity: 0.7}}></i>  &lt; {secondValue} {measurementUnit}<br/></div>);
+    }
+
+    generateLastLegendEntry = (firstValue, colorIndex, color, measurementUnit) => {
+        return (<div key={colorIndex}><i style={{background: color, width: '18px', height: '18px', float: 'left', marginRight: '8px', opacity: 0.7}}></i> &gt; {firstValue} {measurementUnit} <br/></div>);
+
+    }
+    generateLegendEntryForAQI = (value, color) => {
         const colors = paramsColors;
         return (
-            <div key={value}><i style={{background: colors[value], width: '18px', height: '18px', float: 'left', marginRight: '8px', opacity: 0.7}}></i> {value} </div>
+            <div key={value}><i style={{background: color, width: '18px', height: '18px', float: 'left', marginRight: '8px', opacity: 0.7}}></i> {value} </div>
         );
     }
 
@@ -33,21 +34,19 @@ export default class InfoPanelControl extends Component {
         let paramsLevels;
 
         if (state.selectedParameter.index == AQI_INDEX) {
-            paramsLevels = [0, 1, 2, 3, 4, 5];
+            paramsLevels = [1, 2, 3, 4, 5, 6];
         }
-        else if (isInArray(state.selectedParameter.index, paramsWithMontlyValues)) {
+        else if (isInArray(state.selectedParameter.index, paramsIndexesWithMontlyValues)) {
             paramsLevels = state.paramsLevels[state.selectedParameter.index][state.selectedMonth];
         }
         else {
             paramsLevels = state.paramsLevels[state.selectedParameter.index];
         }
 
-        if (state.selectedParameter.index == OZONE_INDEX) {
-            paramsLevels = paramsLevels.slice()
-            paramsLevels.splice(1, 1);
-        }
-
         const that = this;
+        const measurementUnit = displayMeasurementUnit(state.selectedParameter.index,
+            state.measurementUnits);
+        const colors = getColorsSetBySelectedIndex(state.selectedParameter.index);
         return (
             <Control position="bottomright">
                 <div style={{
@@ -61,23 +60,24 @@ export default class InfoPanelControl extends Component {
                 color: '#555'}}>{
                     state.selectedParameter.index == AQI_INDEX ?
                         paramsLevels.map(function(element, index, array) {
-                            return that.generateLegendEntryForAQI(element);
-                        }) :
+                            return that.generateLegendEntryForAQI(element, colors[index]);
+                        })
+                         :
                         paramsLevels.map(function(element, index, array) {
-                            let firstValue;
-                            if (index == 0 && state.selectedParameter.index == paramTemperature) {
-                                firstValue = -10;
-                            }
-                            else if (index == 0) {
-                                firstValue = 0;
+                            let firstValue, secondValue;
+                            if (index == 0) {
+                                secondValue = element
+                                return that.generateFirstLegendEntry(secondValue, index, colors[index], measurementUnit);
                             }
                             else {
                                 firstValue = array[index-1];
+                                secondValue = array[index];
+                                return that.generateLegendEntry(firstValue, secondValue, index, colors[index], measurementUnit);
                             }
 
                             return that.generateLegendEntry(firstValue, element, index,
-                                    state.selectedParameter.index, state.measurementUnits);
-                        })
+                                    state.selectedParameter.index, measurementUnits);
+                        }).concat(that.generateLastLegendEntry(paramsLevels[paramsLevels.length - 1], paramsLevels.length, colors[paramsLevels.length], measurementUnit))
                 }</div>
             </Control>
         );

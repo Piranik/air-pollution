@@ -8,7 +8,7 @@ import {changeCountyAction} from '../actions/DisplayActions.js';
 import {store} from '../stores/store';
 
 @connect(state => state)
-export default class OptionPanelComponent extends Component {
+export default class CountyAutocompleteComponent extends Component {
 
   state = {
     dataSource: []

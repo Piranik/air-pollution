@@ -8,22 +8,28 @@ import { Button, Alert, Spinner, Row, Col } from 'elemental'
 import '../styles/elementalUIStyles.min.css'
 
 import CountyAutocompleteComponent from '../components/CountyAutocompleteComponent'
-import ParametersDropdownComponent from '../components/ParametersDropdownComponent'
+import DropdownComponent from '../components/DropdownComponent'
+
+import { store } from '../stores/store.js'
+import {changeParameterAction} from '../actions/DisplayActions.js'
 
 
 @connect(state => state)
-export default class OptionPanelComponent extends Component {
+export default class PollutionOptionPanelComponent extends Component {
 
     static propTypes = {
         dispatch: React.PropTypes.func,
     }
 
     onParametersDropdownSelect = (value) => {
-        console.log(value)
+        const {dispatch} = store;
+        console.log('Value in handler ', value)
+        dispatch(changeParameterAction(this.props.state.usedParameters.data[value.key]))
     }
 
     render() {
-        const params = this.props.state.usedParameters.data.map(function(element){
+
+        const parameters = this.props.state.usedParameters.data.map(function(element) {
             return element['name'];
         });
 
@@ -35,7 +41,7 @@ export default class OptionPanelComponent extends Component {
             lg="18%"
             style={{
                 textAlign: 'center',
-                backgroundColor: '#BAD1D0',
+                backgroundColor: '#C9E3AC',
                 height: '50%',
                 border: "5px solid",
                 borderRadius: "2em",
@@ -60,7 +66,8 @@ export default class OptionPanelComponent extends Component {
                 </Row>
                 <Row>
                     <Col style={{margin: 'auto', marginTop: '2.5em'}}>
-                        <ParametersDropdownComponent />
+                        <DropdownComponent onSelectHandler={this.onParametersDropdownSelect} dropdownOptions={parameters} displayOption={this.props.state.selectedParameter.name} width={'16em'}
+                        />
                     </Col>
                 </Row>
             </Col>

@@ -13,7 +13,7 @@ export default class InfoPanelControl extends Component {
             const countyName = state.hoveredCounty.charAt(0).toUpperCase() + state.hoveredCounty.slice(1);
             const countyValue = getValue(state.hoveredCounty).toFixed(2);
             const parameterIndex = state.selectedParameter.index;
-            return <span><b>{countyName}</b><br/>{countyValue} {displayMeasurementUnit(parameterIndex, state.measurementUnits)}</span>;
+            return <span><b>{countyName}</b><br/>{countyValue} {displayMeasurementUnit(parameterIndex, state.measurementUnits, this.props.mode)}</span>;
         }
         return 'Hover over a county';
     }
@@ -35,7 +35,7 @@ export default class InfoPanelControl extends Component {
                         margin: '0 0 5px',
                         color: '#777',
                     }}>
-                        {state.selectedParameter.name} Value
+                        {this.props.header}
                     </h4>
                         {this.displayControlInfo()}
                 </div>

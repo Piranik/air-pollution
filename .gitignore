@@ -1,7 +1,9 @@
 *.pyc
 server/data_files/
-server/diseases_all/
-server/datasets_all
+diseases_all/
+datasets_all/
+pred_scores.pkl.bkp
+pred_scores.pkl
 server/summaries
 web/node_modules
 web/build

@@ -32,11 +32,18 @@ DEFAULT_USED_STATIONS_COLLECTION_INDEXES = [
     ('county', ASCENDING)
 ]
 
+DEFAULT_USED_DISEASE_COLLECTION_INDEXES = [
+    ('name', ASCENDING),
+    ('category', ASCENDING)
+]
+
 class Database_Controller(object):
 
     def __init__(self, url = 'mongodb://localhost/', port=27017, database='Air-Pollution'):
         print url
         print port
+        print url + str(port)
+        url = 'mongodb://localhost:'
         print url + str(port)
         self.db_connection = MongoClient(url + str(port))
         self.database = self.db_connection[database]
@@ -67,6 +74,10 @@ class Database_Controller(object):
                 'air_stations_statistics')
             air_stations_statistics_collection.create_index(
                 DEFAULT_USED_STATIONS_COLLECTION_INDEXES, unique=True)
+
+        if 'disease_used' not in current_collections:
+            disease_used = self.database.create_collection('disease_used')
+            disease_used.create_index(DEFAULT_USED_DISEASE_COLLECTION_INDEXES, unique=True)
 
     def check_connection(self):
         return self.db_connection['connect']
@@ -100,12 +111,15 @@ class Database_Controller(object):
 
     def update_object_in_collection(self, collection_name, new_object, update_query, upsert=False):
         self.database[collection_name].update_one(update_query,
-            new_object, upsert)
+                                                  new_object, upsert)
 
     # Find methods
     def find_in_collection(self, collection_name, query_object):
         return self.database[collection_name].find(query_object)
 
+
+    def find_one_in_collection(self, collection_name, query_object):
+        return self.database[collection_name].find_one(query_object)
 
     def drop_collection(self, collection_name):
         self.database[collection_name].drop()

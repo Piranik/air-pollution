@@ -58,7 +58,6 @@ if __name__ == '__main__':
     @app.route('/api/statistics/air_pollution_county')
     @cache.cached(timeout=2592000)
     def get_statistics_for_used_stations():
-        # used_stations_statistics_matrix = resources_manager.get_used_stations_stations()
         county_stations_no, statistics = statistics_manager.air_pollution_county_statistics()
         response = {
             'statistics': statistics,
@@ -75,11 +74,6 @@ if __name__ == '__main__':
     @cache.cached(timeout=2592000)
     def get_parameters():
         viewed_paramters = resources_manager.get_viewed_parameters()
-        viewed_paramters.append({
-            'name': 'Air Quality Index',
-            'formula': 'AQI',
-            'index': 1000
-            })
         response = {
             'parameters': viewed_paramters,
             'parameters_len': len(viewed_paramters)
@@ -87,6 +81,61 @@ if __name__ == '__main__':
         response = jsonify(response)
         response.status_code = 200
 
+        return response
+
+
+    @app.route('/api/used_diseases')
+    @cache.cached(timeout=2592000)
+    def get_used_diseases():
+        used_diseases = resources_manager.get_used_diseases()
+        used_diseases = [{'_id': x['_id'], 'name': x['name'], 'category': x['category']} for x
+                         in used_diseases]
+        response = {
+            'used_diseases': used_diseases,
+            'used_diseases_len': len(used_diseases)
+        }
+        response = jsonify(response)
+        response.status_code = 200
+
+        return response
+
+    @app.route('/api/disease_statistics')
+    @cache.cached(timeout=2592000)
+    def get_statistics_for_used_diseases():
+        statistics, boundaries = statistics_manager.get_disease_county_statistics()
+        print len(statistics[0])
+        response = {
+            'statistics': statistics,
+            'boundaries': boundaries
+        }
+
+        response = jsonify(response)
+        response.status_code = 200
+
+        return response
+
+    @app.route('/api/diseases')
+    @cache.cached(timeout=2592000)
+    def get_diseases_codification():
+        used_diseases = resources_manager.get_used_diseases()
+        sorted_used_diseases_names = sorted([disease['name'] for disease in used_diseases])
+
+        used_diseases_indexes = statistics_manager.compute_element_index_codification(
+            sorted_used_diseases_names)
+
+        diseases_classification = {}
+        for disease in used_diseases:
+            if disease['category'] not in diseases_classification:
+                diseases_classification[disease['category']] = [disease['name']]
+            else:
+                diseases_classification[disease['category']].append(disease['name'])
+
+        response = {
+            'codification': used_diseases_indexes,
+            'diseases_classification': diseases_classification
+        }
+        response = jsonify(response)
+        response.status_code = 200
         return response
 
 

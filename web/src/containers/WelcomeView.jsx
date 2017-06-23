@@ -35,6 +35,17 @@ export default class MainView extends Component {
                         </Link>
                     </Col>
                 </Row>
+                <Row style={{ marginTop: '8em' }}>
+                    <Col xs="75%" sm="75%" md="75%" lg="75%">
+                    </Col>
+                    <Col xs="25%" sm="25%" md="25%" lg="25%">
+                        <Link style={{ textDecoration: 'none' }} to="/air/disease-prediction">
+                            <Button type="hollow-primary" size="lg" style={{width: '15em', height: '5em'}}>
+                                Disease Prediction
+                            </Button>
+                        </Link>
+                    </Col>
+                </Row>
             </div>
         );
     };
