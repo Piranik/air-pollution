@@ -54,3 +54,4 @@ web:
   command: nginx -g 'daemon off;'
   links:
     - api_server
+    - pred_server
