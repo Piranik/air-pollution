@@ -16,6 +16,25 @@ import { store } from '../stores/store.js';
 @connect(state => state)
 export default class PredictionPanelComponent extends Component {
 
+    getResultElement = () => {
+        const {prediction} = this.props.state;
+        if (prediction.result == null) {
+            return (
+                <Col xs="100%" sm="100%" md="100%" lg="100%" style={{border: '0.5em solid black', borderRadius: '25%', backgroundColor: this.getResultColor()}}>
+                    <div style={{fontSize: '10em', textAlign: 'center', color: '#EAEFBD'}}>
+                    {'...'} </div>
+                </Col>
+            );
+        }
+        else {
+            return (
+                <Col xs="100%" sm="100%" md="100%" lg="100%" style={{border: '0.5em solid black', borderRadius: '25%', backgroundColor: this.getResultColor()}}>
+                    <div style={{fontSize: '10em', textAlign: 'center', color: '#EAEFBD'}}> {prediction.result} </div>
+                </Col>
+            );
+        }
+    }
+
     getValueFromOption = (option) => {
         if (option == null) {
             return null;
@@ -32,6 +51,35 @@ export default class PredictionPanelComponent extends Component {
             color = diseasesColors[prediction.result];
         }
         return color;
+    }
+
+    isButtonDisabled = () => {
+        const {prediction} = this.props.state;
+        if (prediction.selectedDiseaseClass == null) {
+            return true;
+        }
+
+        if (prediction.selectedAqi == null) {
+            return true;
+        }
+
+        if (prediction.selectedWind == null) {
+            return true;
+        }
+
+        if (prediction.selectedPressure == null) {
+            return true;
+        }
+
+        if (prediction.selectedRainfall == null) {
+            return true;
+        }
+
+        if (prediction.selectedTemperature == null) {
+            return true;
+        }
+
+        return false;
     }
 
     onPredictionToolChange = (selectedOption) => {
@@ -268,7 +316,7 @@ export default class PredictionPanelComponent extends Component {
 
                 </Col>
                 <Col xs="20%" sm="20%" md="20%" lg="20%">
-                    <Button type="success" size="lg" style={{marginTop: '9em', marginLeft: '1.2em', marginRight: '1.2em', fontSize: '2em', backgroundColor: '#226764'}} onClick={this.predictButtonHandler}>Predict =></Button>
+                    <Button type="success" size="lg" style={{marginTop: '9em', marginLeft: '1.2em', marginRight: '1.2em', fontSize: '2em', backgroundColor: '#226764'}} onClick={this.predictButtonHandler} disabled={this.isButtonDisabled()}>Predict =></Button>
                 </Col>
                 <Col xs="25%" sm="25%" md="25%" lg="25%">
                     <Row style={{marginTop: '2em'}}>
@@ -277,9 +325,7 @@ export default class PredictionPanelComponent extends Component {
                         </Col>
                     </Row>
                     <Row style={{marginTop: '4em'}}>
-                        <Col xs="100%" sm="100%" md="100%" lg="100%" style={{border: '0.5em solid black', borderRadius: '25%', backgroundColor: this.getResultColor()}}>
-                            <div style={{fontSize: '10em', textAlign: 'center', color: '#EAEFBD'}}> {prediction.result != null || '...'} </div>
-                        </Col>
+                        {this.getResultElement()}
                     </Row>
                 </Col>
             </Row>
