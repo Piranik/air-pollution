@@ -94,7 +94,10 @@ def import_diseases(resources_manager, statistics_manager, app_config):
                           app_config['diseases_folder'], f)) and '.xls' in f]
 
     diseases_storage = {}
+    i = 0
     for disease_file in diseases_files:
+        print i
+        i += 1
         county, start_date, end_date, diseases = disease_parser.parse(disease_file)
         for disease in diseases:
             if disease['code'] in diseases_storage:
@@ -119,15 +122,15 @@ def create_disease_statistic_object(new_disease, county, start_date, end_date):
     return {'start_date': start_date,
             'end_date': end_date,
             'county': county,
-            'vr': new_disease['vr'],
+            #'vr': new_disease['vr'],
             'total_number_cases': new_disease['total_number_cases'],
             'percentage_of_cases': new_disease['percentage_of_cases'],
-            'acute_cases': new_disease['acute_cases'],
-            'chronic_cases': new_disease['chronic_cases'],
-            'spitalization_total': new_disease['spitalization_total'],
-            'spitalization_acute': new_disease['spitalization_acute'],
-            'spitalization_chronic': new_disease['spitalization_chronic'],
-            'dms_acute': new_disease['dms_acute'],
+            #'acute_cases': new_disease['acute_cases'],
+            #'chronic_cases': new_disease['chronic_cases'],
+            #'spitalization_total': new_disease['spitalization_total'],
+            #'spitalization_acute': new_disease['spitalization_acute'],
+            #'spitalization_chronic': new_disease['spitalization_chronic'],
+            #'dms_acute': new_disease['dms_acute'],
             'dms_chronic': new_disease['dms_chronic']}
 
 def create_disease_object(new_disease, county, start_date, end_date):
@@ -146,7 +149,7 @@ def import_data(app_config):
     statistics_manager = Statistics_Manager()
     # import_stations(resources_manager, app_config)
     # import_stations_measurements(resources_manager, app_config)
-    # import_diseases(resources_manager, statistics_manager, app_config)
-    import_diseases_old(resources_manager, statistics_manager, app_config)
+    import_diseases(resources_manager, statistics_manager, app_config)
+    #import_diseases_old(resources_manager, app_config)
 
 

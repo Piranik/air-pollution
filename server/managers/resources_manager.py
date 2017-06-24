@@ -276,7 +276,7 @@ class Resources_Manager(object):
                             'vr': new_disease['vr'],
                             'total_number_cases': new_disease['total_number_cases'],
                             'percentage_of_cases': new_disease['percentage_of_cases'],
-                            'acute_casses': new_disease['acute_casses'],
+                            'acute_cases': new_disease['acute_cases'],
                             'chronic_cases': new_disease['chronic_cases'],
                             'spitalization_total': new_disease['spitalization_total'],
                             'spitalization_acute': new_disease['spitalization_acute'],
