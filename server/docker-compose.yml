@@ -36,8 +36,8 @@ pred_server:
     volumes:
         - ./:/opt/air-pollution
         - ../pred_scores.pkl/:/opt/pred_scores.pkl
-    #command: /bin/bash /tmp/run_pred_service_script.sh
-    command: sleep 10000000000000
+    #command: sleep 10000000000000
+    command: /bin/bash /tmp/run_pred_service_script.sh
     links:
         - db:db
     container_name: prediction-container
