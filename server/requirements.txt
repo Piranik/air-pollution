@@ -10,5 +10,5 @@ pyyaml
 python-dateutil
 xlsxwriter
 numpy
-scikit-learn
+scikit-learn==0.18.1
 scipy
