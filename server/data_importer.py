@@ -68,6 +68,23 @@ def import_stations_measurements(resources_manager, app_config):
     print 'Importing Measurements'
 
 
+def import_diseases_old(resources_manager, app_config):
+    print 'Importing Diseases'
+    disease_parser = Disease_parser()
+    # Parse disease files
+    diseases_files = [join(app_config['diseases_folder'], f) for f in
+                      listdir(app_config['diseases_folder']) if isfile(join(
+                          app_config['diseases_folder'], f)) and '.xls' in f]
+
+    for disease_file in diseases_files:
+        county, start_date, end_date, diseases = disease_parser.parse(disease_file)
+        print county, start_date, end_date, len(diseases)
+        for disease in diseases:
+            resources_manager.update_insert_disease_old(disease, county, start_date, end_date)
+    print 'Importing Diseases Done'
+
+
+
 def import_diseases(resources_manager, statistics_manager, app_config):
     print 'Importing Diseases'
     disease_parser = Disease_parser()
@@ -129,5 +146,7 @@ def import_data(app_config):
     statistics_manager = Statistics_Manager()
     # import_stations(resources_manager, app_config)
     # import_stations_measurements(resources_manager, app_config)
-    import_diseases(resources_manager, statistics_manager, app_config)
+    # import_diseases(resources_manager, statistics_manager, app_config)
+    import_diseases_old(resources_manager, statistics_manager, app_config)
+
 
