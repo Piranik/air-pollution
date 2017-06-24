@@ -31,6 +31,18 @@ api_server:
     ports:
         - 8000:8000
 
+pred_server:
+    image: configurer
+    volumes:
+        - ./:/opt/air-pollution
+        - ../pred_scores.pkl/:/opt/pred_scores.pkl
+    command: /bin/bash /tmp/run_prediction_service_script.sh
+    links:
+        - db:db
+    container_name: prediction-container
+    ports:
+        - 8001:8001
+
 web:
   image: nginx
   volumes:
