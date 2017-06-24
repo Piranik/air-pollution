@@ -20,7 +20,7 @@ _START_YEAR = 2012
 _LAST_YEAR = 2017
 DISEASE_TRAIN_SET_PERCENTAGE = 0.9
 INTERVAL_LENGHT = 6
-SCORES_FILENAME = 'pred_scores.pkl'
+SCORES_FILENAME = '../pred_scores.pkl'
 
 
 class Prediction_Manager(object):
