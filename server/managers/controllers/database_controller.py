@@ -43,7 +43,7 @@ class Database_Controller(object):
         print url
         print port
         print url + str(port)
-        url = 'mongodb://localhost:'
+        #url = 'mongodb://localhost:'
         print url + str(port)
         self.db_connection = MongoClient(url + str(port))
         self.database = self.db_connection[database]

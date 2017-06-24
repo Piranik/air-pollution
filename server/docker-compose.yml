@@ -2,8 +2,10 @@ configurer:
     image: configurer
     volumes:
         - ./:/opt/air-pollution
-    command: sleep 10000000000000
-    # command: /bin/bash /tmp/run_configurer_script.sh
+        - ../datasets_all/:/opt/datasets_all
+        - ../diseases_all/:/opt/diseases_all
+    #command: sleep 10000000000000
+    command: /bin/bash /tmp/run_configurer_script.sh
     links:
         - db:db
     container_name: configurer-container
