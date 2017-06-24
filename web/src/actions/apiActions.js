@@ -18,12 +18,12 @@ export const RECEIVE_PREDICTION_INFO = 'RECEIVE_PREDICTION_INFO'
 export const REQUEST_PREDICTION_RESULT = 'REQUEST_PREDICTION_RESULT'
 export const RECEIVE_PREDICTION_RESULT = 'RECEIVE_PREDICTION_RESULT'
 
-// const API_BASE_URL = 'http://opendata.cs.pub.ro/air/api/'
-// const API_PREDICTION_URL = 'http://opendata.cs.pub.ro/air/api/prediction/'
+const API_BASE_URL = 'http://opendata.cs.pub.ro/air/api/'
+const API_PREDICTION_URL = 'http://opendata.cs.pub.ro/air/api/prediction/'
 
 // For DEv
-const API_BASE_URL = 'http://localhost:8000/api/'
-const API_PREDICTION_URL = 'http://localhost:8001/api/prediction/'
+// const API_BASE_URL = 'http://localhost:8000/api/'
+// const API_PREDICTION_URL = 'http://localhost:8001/api/prediction/'
 
 function requestParameters() {
   return {
