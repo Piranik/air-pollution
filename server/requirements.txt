@@ -11,3 +11,4 @@ python-dateutil
 xlsxwriter
 numpy
 scikit-learn
+scipy
