@@ -115,7 +115,7 @@ export default class YearSliderComponent extends Component {
                 md="25%"
                 lg="25%"
                 style={{
-                    fontSize: '3.8em'
+                    fontSize: '3.6em'
                 }} >
                     { this.props.state.playButtonPressed == true ?
                         <span style={{color: 'red'}} onClick={this.onStopButtonHandler}> &#9612;&#9612;</span> :
@@ -128,7 +128,7 @@ export default class YearSliderComponent extends Component {
                 md="75%"
                 lg="75%"
                 style={{
-                    marginTop: '1.0em'
+                    paddingTop: '1.0em'
                 }}
                 >
                     <Slider max={max} marks={this.marks} tipFormatter={this.sliderFormatter} value={this.convertToMarkIndex()} onChange={this.onChangeValueHandler} disabled={this.props.state.interfaceDisabled}/>

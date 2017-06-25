@@ -17,7 +17,7 @@ export default class TitleComponent extends Component {
     render() {
         return (
             <div>
-                <Row style={{width: '100%', height: '4.5em', backgroundColor: '#226764'}}>
+                <Row style={{width: '101%', height: '4.5em', backgroundColor: '#226764'}}>
                     <Col xs="25%" sm="25%" md="25%" lg="25%"></Col>
                     <Col xs="50%" sm="50%" md="50%" lg="50%" style={{textAlign: 'center', fontSize: '3em', marginTop: '0.1em', color: '#BAD1D0'}}>
                         {this.props.titleText}
