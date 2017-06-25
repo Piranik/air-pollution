@@ -46,7 +46,11 @@ export default class DiseaseEvolutionView extends Component {
         if (mapCoords.data.length == 0 || diseaseStatistics.data.length == 0
             || counties.data.length == 0 || usedParameters.data.length == 0) {
             return (
-                <Spinner size="lg" />
+                <Row style={{ width: '99%', paddingTop: '30em', paddingLeft: '50em'}}>
+                    <Spinner
+                        type="primary"
+                        size="lg"/>
+                </Row>
             );
         }
         else {

@@ -38,7 +38,11 @@ export default class DiseasePredictionView extends Component {
         if (isEmpty(diseases.codification) || isEmpty(diseaseStatistics.boundaries) || prediction.tools.length === 0 || isEmpty(prediction.toolsCodification) || isEmpty(prediction.toolsScores) || prediction.selectedDisease == null || diseases.isFetching || prediction.isFetching) {
             console.log(this.props.state)
             return (
-                <Spinner size="lg" />
+                <Row style={{ width: '99%', paddingTop: '30em', paddingLeft: '50em'}}>
+                    <Spinner
+                        type="primary"
+                        size="lg"/>
+                </Row>
             );
         }
         else {

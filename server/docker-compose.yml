@@ -19,7 +19,7 @@ db:
     environment:
         - AUTH=no
 
-api_server:
+api_service:
     image: configurer
     volumes:
         - ./:/opt/air-pollution
@@ -31,7 +31,32 @@ api_server:
     ports:
         - 8000:8000
 
-pred_server:
+pollution_service:
+    image: configurer
+    volumes:
+        - ./:/opt/air-pollution
+    command: /bin/bash /tmp/run_pollution_service_script.sh
+    # command: sleep 10000000000000000
+    links:
+        - db:db
+    container_name: server-container
+    ports:
+        - 8000:8000
+
+diseases_service:
+    image: configurer
+    volumes:
+        - ./:/opt/air-pollution
+    command: /bin/bash /tmp/run_diseases_service_script.sh
+    # command: sleep 10000000000000000
+    links:
+        - db:db
+    container_name: server-container
+    ports:
+        - 8000:8000
+
+
+pred_service:
     image: configurer
     volumes:
         - ./:/opt/air-pollution
@@ -42,7 +67,7 @@ pred_server:
         - db:db
     container_name: prediction-container
     ports:
-        - 8001:8001
+        - 8003:8003
 
 web:
   image: nginx

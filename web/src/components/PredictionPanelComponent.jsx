@@ -171,7 +171,7 @@ export default class PredictionPanelComponent extends Component {
         const predictionsTools = prediction.tools;
         console.log(this.props.state.prediction)
         return (
-            <Row style={{width: '101%', height: '100%', color: '#5E6472'}}>
+            <Row style={{width: '100%', height: '100%', color: '#5E6472'}}>
                 <Col xs="47%" sm="47%" md="47%" lg="47%" style={{border: '0.6em solid black', borderRadius: '10%', backgroundColor: '#C9E3AC'}}>
                     <Row>
                         <Col xs="70%" sm="70%" lg="70%" style={{borderBottom: '0.3em solid black',

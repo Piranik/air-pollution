@@ -43,7 +43,11 @@ export default class AirPollutionView extends Component {
             || counties.data.length == 0 || usedParameters.data.length == 0) {
             console.log('loading ...')
             return (
-                <Spinner size="lg" />
+                <Row style={{ width: '99%', paddingTop: '30em', paddingLeft: '50em'}}>
+                    <Spinner
+                        type="primary"
+                        size="lg"/>
+                </Row>
             );
         }
         else {

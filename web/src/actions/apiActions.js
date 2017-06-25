@@ -19,11 +19,13 @@ export const REQUEST_PREDICTION_RESULT = 'REQUEST_PREDICTION_RESULT'
 export const RECEIVE_PREDICTION_RESULT = 'RECEIVE_PREDICTION_RESULT'
 
 const API_BASE_URL = 'http://opendata.cs.pub.ro/air/api/'
-const API_PREDICTION_URL = 'http://opendata.cs.pub.ro/air/api/prediction/'
-
 // For DEv
 // const API_BASE_URL = 'http://localhost:8000/api/'
-// const API_PREDICTION_URL = 'http://localhost:8001/api/prediction/'
+
+const API_POLLUTION_URL = API_BASE_URL + 'pollution/'
+const API_DISEASES_URL = API_BASE_URL + 'diseases/'
+const API_PREDICTION_URL = API_BASE_URL + 'prediction/'
+
 
 function requestParameters() {
   return {
@@ -149,7 +151,7 @@ function receivePredictionResult(response) {
 export function fetchParameters() {
   return function(dispatch) {
     dispatch(requestParameters());
-    return fetch(API_BASE_URL + 'viewed_parameters')
+    return fetch(API_POLLUTION_URL + 'viewed_parameters')
       .then(response => response.json())
         .then(json => {
           console.log('Got parameters');
@@ -185,7 +187,7 @@ export function fetchMapCoords() {
 export function fetchAirPollutionStatistics() {
   return function(dispatch) {
     dispatch(requestAirPollutionStatistics());
-    return fetch(API_BASE_URL + 'statistics/air_pollution_county')
+    return fetch(API_POLLUTION_URL + 'statistics/air_pollution_county')
       .then(response => response.json())
         .then(json => {
           console.log('Got Air Statistics')
@@ -197,7 +199,7 @@ export function fetchAirPollutionStatistics() {
 export function fetchDiseaseStatistics() {
   return function(dispatch) {
     dispatch(requestDiseaseStatistics());
-    return fetch(API_BASE_URL + 'disease_statistics')
+    return fetch(API_DISEASES_URL + 'disease_statistics')
       .then(response => response.json())
         .then(json => {
           console.log('Got Disease Statistics');
@@ -210,7 +212,7 @@ export function fetchDiseaseStatistics() {
 export function fetchDiseases() {
   return function(dispatch) {
     dispatch(requestDiseases());
-    return fetch(API_BASE_URL + 'diseases')
+    return fetch(API_DISEASES_URL + 'list')
       .then(response => response.json())
         .then(json => {
           console.log('Got Diseases');
