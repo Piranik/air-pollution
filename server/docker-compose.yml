@@ -79,5 +79,7 @@ web:
   command: nginx -g 'daemon off;'
   container_name: web-container
   links:
-    - api_server
-    - pred_server
+    - api_service
+    - pollution_service
+    - diseases_service
+    - prediction_service
