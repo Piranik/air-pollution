@@ -27,7 +27,7 @@ api_service:
     # command: sleep 10000000000000000
     links:
         - db:db
-    container_name: server-container
+    container_name: api-container
     ports:
         - 8000:8000
 
@@ -39,7 +39,7 @@ pollution_service:
     # command: sleep 10000000000000000
     links:
         - db:db
-    container_name: server-container
+    container_name: pollution-container
     ports:
         - 8000:8000
 
@@ -51,12 +51,12 @@ diseases_service:
     # command: sleep 10000000000000000
     links:
         - db:db
-    container_name: server-container
+    container_name: diseases-container
     ports:
         - 8000:8000
 
 
-pred_service:
+prediction_service:
     image: configurer
     volumes:
         - ./:/opt/air-pollution
@@ -77,6 +77,7 @@ web:
   ports:
    - "4000:80"
   command: nginx -g 'daemon off;'
+  container_name: web-container
   links:
     - api_server
     - pred_server
