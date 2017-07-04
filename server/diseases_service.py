@@ -54,4 +54,19 @@ if __name__ == '__main__':
         response.status_code = 200
         return response
 
+    # @app.route('/api/pollution/used_diseases')
+    # @cache.cached(timeout=2592000)
+    # def get_used_diseases():
+    #     used_diseases = resources_manager.get_used_diseases()
+    #     used_diseases = [{'_id': x['_id'], 'name': x['name'], 'category': x['category']} for x
+    #                      in used_diseases]
+    #     response = {
+    #         'used_diseases': used_diseases,
+    #         'used_diseases_len': len(used_diseases)
+    #     }
+    #     response = jsonify(response)
+    #     response.status_code = 200
+
+    #     return response
+
     app.run(threaded=True, host='0.0.0.0', port='8002', )

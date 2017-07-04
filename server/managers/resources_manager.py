@@ -212,6 +212,7 @@ class Resources_Manager(object):
         # Check station
         # if self.database_controller.collection_exists(station['internationalCode']):
         for parameter_info, parameter_measurements in measurements:
+            #if parameter_measurements:
             self.update_insert_parameter(parameter_info)
             self.insert_measurement(station['internationalCode'],
                                     parameter_info, parameter_measurements, date, file_name)

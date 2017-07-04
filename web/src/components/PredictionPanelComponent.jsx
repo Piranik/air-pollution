@@ -12,6 +12,7 @@ import {diseasesColors} from '../utils.jsx';
 
 import { store } from '../stores/store.js';
 
+const RESULT_VALUES = ['Good', 'Medium', 'Hard'];
 
 @connect(state => state)
 export default class PredictionPanelComponent extends Component {
@@ -29,7 +30,7 @@ export default class PredictionPanelComponent extends Component {
         else {
             return (
                 <Col xs="100%" sm="100%" md="100%" lg="100%" style={{border: '0.5em solid black', borderRadius: '25%', backgroundColor: this.getResultColor()}}>
-                    <div style={{fontSize: '10em', textAlign: 'center', color: '#EAEFBD'}}> {prediction.result} </div>
+                    <div style={{fontSize: '8em', textAlign: 'center', color: '#EAEFBD'}}> {RESULT_VALUES[prediction.result]} </div>
                 </Col>
             );
         }

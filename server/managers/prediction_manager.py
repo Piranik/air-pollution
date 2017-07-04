@@ -15,6 +15,11 @@ import os.path
 import copy
 from time import time
 import random
+import xlsxwriter
+from heapq import heappop, heappush
+
+import pylab
+
 
 _START_YEAR = 2012
 _LAST_YEAR = 2017
@@ -53,7 +58,6 @@ class Prediction_Manager(object):
                 ('SVM poly d2 coef0-2', {'kernel': 'poly', 'degree': 2, 'coef0': 2}),
                 ('SVM poly d3', {'kernel': 'poly', 'degree': 3}),
                 ('SVM poly d3 coef0-2', {'kernel': 'poly', 'degree': 3, 'coef0': 2}),
-
                 ('SVM rbf C-10^-5', {'kernel': 'rbf', 'C': 0.00001}),
                 ('SVM rbf C-10^-4', {'kernel': 'rbf', 'C': 0.0001}),
                 ('SVM rbf C-100', {'kernel': 'rbf', 'C': 100}),
@@ -335,19 +339,326 @@ class Prediction_Manager(object):
         return predction_result
 
 
+    def create_statistics_NN(self):
+        XLS_NAME = 'NN_table.xlsx'
+        diseases = self.resources_manager.get_used_diseases()
+        workbook = xlsxwriter.Workbook(XLS_NAME)
+        worksheet = workbook.add_worksheet()
+
+        format = workbook.add_format()
+        format.set_bg_color('#FFE599')
+
+        row = 0
+        # Headers
+        worksheet.write(0, 0, 'Denumire Boala')
+        worksheet.write(0, 1, 'Luni folosite')
+        for index in xrange(len(self.generic_tools['nn'])):
+            worksheet.write(0, 2 + index, self.generic_tools['nn'][index][0])
+        row += 1
+        # Content
+        for disease in diseases:
+            worksheet.write(row, 0, disease['name'])
+            for month in xrange(1, 6):
+                worksheet.write(row, 1, month)
+                my_max = 0
+                cols_max = []
+                for index in xrange(len(self.generic_tools['nn'])):
+                    value = round(self.prediction_tools[month][disease['name']][index][1] * 100, 2)
+                    if value > my_max:
+                        my_max = value
+                        cols_max = [index]
+                    elif value == my_max:
+                        cols_max.append(index)
+                    worksheet.write(row, 2+index, value)
+                for index in cols_max:
+                    worksheet.write(row, 2+index, my_max, format)
+
+                row += 1
+        workbook.close()
+
+    def create_statistics_SVM(self):
+        XLS_NAME = 'SVM_table.xlsx'
+        step = len(self.generic_tools['nn'])
+        diseases = self.resources_manager.get_used_diseases()
+        workbook = xlsxwriter.Workbook(XLS_NAME)
+        worksheet = workbook.add_worksheet()
+
+        format = workbook.add_format()
+        format.set_bg_color('#FFE599')
+
+        row = 0
+        # Headers
+        worksheet.write(0, 0, 'Denumire Boala')
+        worksheet.write(0, 1, 'Luni folosite')
+        for index in xrange(len(self.generic_tools['svm'])):
+            worksheet.write(0, 2 + index, self.generic_tools['svm'][index][0])
+        row += 1
+        # Content
+        for disease in diseases:
+            worksheet.write(row, 0, disease['name'])
+            for month in xrange(1, 6):
+                worksheet.write(row, 1, month)
+                my_max = 0
+                cols_max = []
+                for index in xrange(len(self.generic_tools['svm'])):
+                    value = round(self.prediction_tools[month][disease['name']][step + index][1] * 100, 2)
+                    if value > my_max:
+                        my_max = value
+                        cols_max = [index]
+                    elif value == my_max:
+                        cols_max.append(index)
+                    worksheet.write(row, 2+index, value)
+                for index in cols_max:
+                    worksheet.write(row, 2+index, my_max, format)
+
+                row += 1
+        workbook.close()
+
+    def best_NN(self):
+        XLS_NAME = 'NN_best.xlsx'
+        diseases = self.resources_manager.get_used_diseases()
+        workbook = xlsxwriter.Workbook(XLS_NAME)
+        worksheet = workbook.add_worksheet()
+
+        format = workbook.add_format()
+        format.set_bg_color('#FFE599')
+
+
+        # Content
+        heapq = []
+        for disease in diseases:
+
+            # worksheet.write(row, 0, disease['name'])
+            for month in xrange(1, 6):
+                # worksheet.write(row, 1, month)
+                line = [disease['name'], month]
+                my_max = 0
+                cols_max = []
+                for index in xrange(len(self.generic_tools['nn'])):
+                    value = round(self.prediction_tools[month][disease['name']][index][1] * 100, 2)
+                    line.append(value)
+                    if value > my_max:
+                        my_max = value
+                        cols_max = [index]
+                    elif value == my_max:
+                        cols_max.append(index)
+                    # worksheet.write(row, 2+index, value)
+                # for index in cols_max:
+                #     worksheet.write(row, 2+index, my_max, format)
+                # row += 1
+                heappush(heapq, (-1 * my_max, cols_max, line))
+
+        row = 0
+        # Headers
+        worksheet.write(0, 0, 'Denumire Boala')
+        worksheet.write(0, 1, 'Luni folosite')
+        for index in xrange(len(self.generic_tools['nn'])):
+            worksheet.write(0, 2 + index, self.generic_tools['nn'][index][0])
+        row += 1
+
+        for i in xrange(15):
+            line = heappop(heapq)
+            for index, value in enumerate(line[2]):
+                if index-2 in line[1]:
+                    worksheet.write(row, index, value, format)
+                else:
+                    worksheet.write(row, index, value)
+            row += 1
+
+
+        workbook.close()
+
+
+    def best_SVM(self):
+        XLS_NAME = 'SVM_best.xlsx'
+        diseases = self.resources_manager.get_used_diseases()
+        workbook = xlsxwriter.Workbook(XLS_NAME)
+        worksheet = workbook.add_worksheet()
+
+        step = len(self.generic_tools['nn'])
+
+        format = workbook.add_format()
+        format.set_bg_color('#FFE599')
+
+
+        # Content
+        heapq = []
+        for disease in diseases:
+
+            # worksheet.write(row, 0, disease['name'])
+            for month in xrange(1, 6):
+                # worksheet.write(row, 1, month)
+                line = [disease['name'], month]
+                my_max = 0
+                cols_max = []
+                for index in xrange(len(self.generic_tools['svm'])):
+                    value = round(self.prediction_tools[month][disease['name']][step + index][1] * 100, 2)
+                    line.append(value)
+                    if value > my_max:
+                        my_max = value
+                        cols_max = [index]
+                    elif value == my_max:
+                        cols_max.append(index)
+                    # worksheet.write(row, 2+index, value)
+                # for index in cols_max:
+                #     worksheet.write(row, 2+index, my_max, format)
+                # row += 1
+                heappush(heapq, (-1 * my_max, cols_max, line))
+
+        row = 0
+        # Headers
+        worksheet.write(0, 0, 'Denumire Boala')
+        worksheet.write(0, 1, 'Luni folosite')
+        for index in xrange(len(self.generic_tools['svm'])):
+            worksheet.write(0, 2 + index, self.generic_tools['svm'][index][0])
+        row += 1
+
+        for i in xrange(15):
+            line = heappop(heapq)
+            for index, value in enumerate(line[2]):
+                if index-2 in line[1]:
+                    worksheet.write(row, index, value, format)
+                else:
+                    worksheet.write(row, index, value)
+            row += 1
+
+        workbook.close()
+
+
+
+    def sigmoid_effects(self):
+        conf = {
+            'Boala interstitiala pulmonara': [1],
+            'Accident vascular cerebral': [1, 2, 3, 4],
+            'Neoplasm pulmonar': [2],
+            'Tulburari vasculare': [4, 3]
+        }
+
+        tools = [
+            {'solver': 'sgd', 'hidden_layer_sizes': (30, 30, 30, 30, 30), 'activation': 'logistic'},
+            {'solver': 'sgd', 'hidden_layer_sizes': (100, 100, 100), 'activation': 'logistic'},
+            {'kernel': 'sigmoid'}
+        ]
+
+        # headers
+        XLS_NAME = 'Sigmoid_table.xlsx'
+        workbook = xlsxwriter.Workbook(XLS_NAME)
+        worksheet = workbook.add_worksheet()
+
+        # format = workbook.add_format()
+        # format.set_bg_color('#FFE599')
+
+        # Headers
+        worksheet.write(0, 0, 'Denumire Boala')
+        worksheet.write(0, 1, 'Luni folosite')
+        worksheet.write(0, 2, 'F1')
+        worksheet.write(0, 3, 'F2')
+        worksheet.write(0, 4, 'F3')
+
+        row = 1
+        for disease in conf:
+            worksheet.write(row, 0, disease)
+            for month in conf[disease]:
+                worksheet.write(row, 1, month)
+                dataset = self.create_datasets(disease, month)
+                train_set, test_x, test_t, _, _ = self.create_train_test_from_datasets(dataset)
+                train_x = []
+                train_t = []
+                shuffle(train_set)
+                for index in xrange(len(train_set)):
+                    train_x.append(train_set[index][0])
+                    train_t.append(train_set[index][1])
+                model = MLPClassifier(**tools[0])
+                model.fit(train_x, train_t)
+                score = model.score(test_x, test_t)
+                worksheet.write(row, 2, round(score * 100, 2))
+
+                model = MLPClassifier(**tools[1])
+                model.fit(train_x, train_t)
+                score = model.score(test_x, test_t)
+                worksheet.write(row, 3, round(score * 100, 2))
+
+                model = svm.SVC(**tools[2])
+                model.fit(train_x, train_t)
+                score = model.score(test_x, test_t)
+                worksheet.write(row, 4, round(score * 100, 2))
+                row += 1
+        workbook.close()
+
+
+
+    def create_plots_SVM(self):
+        pylab.axis([0, 6, 0, 1])
+
+        # Cost1 vs cost2 plot
+        disease = 'Accident vascular cerebral'
+        x = [1, 2, 3, 4, 5]
+        c1 = []
+        c2 = []
+        for i in x:
+            c1.append(self.prediction_tools[i][disease][12][2])
+            c2.append(self.prediction_tools[i][disease][14][2])
+
+        pylab.plot(x,c1, label='Cost 0.0001')
+        pylab.plot(x,c2, label='Cost 100')
+
+        pylab.legend(loc='upper right')
+        pylab.xlabel('Luna')
+        pylab.ylabel('Timp de antrenare (s)')
+
+        pylab.show()
+
+        # # D2 vs D3 plot
+        # disease = 'Accident vascular cerebral'
+        # x = [1, 2, 3, 4, 5]
+        # d2 = []
+        # d3 = []
+        # for i in x:
+        #     d2.append(self.prediction_tools[i][disease][8][2])
+        #     d3.append(self.prediction_tools[i][disease][10][2])
+
+        # pylab.plot(x,d2, label='Gradul 2')
+        # pylab.plot(x,d3, label='Gradul 3')
+
+        # pylab.legend(loc='upper right')
+        # pylab.xlabel('Luna')
+        # pylab.ylabel('Timp de antrenare (s)')
+
+        # pylab.show()
+
+        # # NN 1 vs NN2
+        # disease = 'Accident vascular cerebral'
+
+        # x = [1, 2, 3, 4, 5]
+        # n1 = [0.0] * 5
+        # n2 = [0.0] * 5
+        # diseases = self.resources_manager.get_used_diseases()
+        # for i in x:
+        #     for disease in diseases:
+        #         n1[i-1] += self.prediction_tools[i][disease['name']][0][2]
+        #         n2[i-1] += self.prediction_tools[i][disease['name']][3][2]
+
+        # for i in x:
+        #     n1[i-1] /= len(diseases)
+        #     n2[i-1] /= len(diseases)
+
+        # pylab.plot(x,n1, label='NN 5 x 30')
+        # pylab.plot(x,n2, label='NN 3 x 100')
+
+        # pylab.legend(loc='upper right')
+        # pylab.xlabel('Luna')
+        # pylab.ylabel('Timp de antrenare (s)')
+
+        # pylab.show()
+
+
 if __name__ == '__main__':
     pm = Prediction_Manager()
-    print "Boala\tLungime set antrenare\tScore NN"
+    # print "Boala\tLungime set antrenare\tScore NN"
     pm.init_prediction_tools()
-    tool_names = pm.get_prediction_tools_names()
-    x = len(pm.generic_tools['nn'])
-    for m in pm.prediction_tools.keys():
-        for d in pm.prediction_tools[m].keys():
-            for l in xrange(x, len(pm.prediction_tools[m][d])):
-                pm.prediction_tools[m][d][l] = (
-                    pm.prediction_tools[m][d][l][1],
-                    pm.prediction_tools[m][d][l][0],
-                    pm.prediction_tools[m][d][l][2])
-    with open(SCORES_FILENAME, 'wb') as scores_file:
-        pickle.dump(pm.prediction_tools, scores_file, pickle.HIGHEST_PROTOCOL)
-
+    # pm.create_statistics_NN()
+    # pm.create_statistics_SVM()
+    # pm.best_NN()
+    # pm.best_SVM()
+    pm.create_plots_SVM()
+    # pm.sigmoid_effects()
