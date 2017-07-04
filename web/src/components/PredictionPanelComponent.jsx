@@ -22,7 +22,7 @@ export default class PredictionPanelComponent extends Component {
         if (prediction.result == null) {
             return (
                 <Col xs="100%" sm="100%" md="100%" lg="100%" style={{border: '0.5em solid black', borderRadius: '25%', backgroundColor: this.getResultColor()}}>
-                    <div style={{fontSize: '10em', textAlign: 'center', color: '#EAEFBD'}}>
+                    <div style={{fontSize: '6.5em', textAlign: 'center', color: '#EAEFBD', height: '2em', marginTop: '0.4em'}}>
                     {'...'} </div>
                 </Col>
             );
@@ -30,7 +30,7 @@ export default class PredictionPanelComponent extends Component {
         else {
             return (
                 <Col xs="100%" sm="100%" md="100%" lg="100%" style={{border: '0.5em solid black', borderRadius: '25%', backgroundColor: this.getResultColor()}}>
-                    <div style={{fontSize: '8em', textAlign: 'center', color: '#EAEFBD'}}> {RESULT_VALUES[prediction.result]} </div>
+                    <div style={{fontSize: '6.5em', textAlign: 'center', color: '#EAEFBD', height: '2em', marginTop: '0.4em'}}> {RESULT_VALUES[prediction.result]} </div>
                 </Col>
             );
         }
